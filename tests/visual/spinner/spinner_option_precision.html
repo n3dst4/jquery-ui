@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Spinner Visual Test : Spinner option precision</title>
+	<link rel="stylesheet" href="../visual.css" type="text/css">
+	<link rel="stylesheet" href="../../../themes/base/ui.all.css" type="text/css">
+	<script type="text/javascript" src="../../../jquery-1.3.2.js"></script>
+	<script type="text/javascript" src="../../../ui/ui.core.js"></script>
+	<script type="text/javascript" src="../../../ui/ui.spinner.js"></script>
+	<script type="text/javascript">
+	$(function() {
+		$('#spinner').spinner({ precision: 4, value: 1.23456789 });
+		$('#spinner').spinner('option', 'precision', 2);
+	});
+	</script>
+</head>
+<body>
+<div class="ui-widget">
+	
+	<p><label>precision:</label> <input id="spinner" type="text" value="10"></p>
+
+</div>
+</body>
+</html>

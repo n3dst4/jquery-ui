@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Spinner Visual Test : Spinner options min, max and step</title>
+	<link rel="stylesheet" href="../visual.css" type="text/css">
+	<link rel="stylesheet" href="../../../themes/base/ui.all.css" type="text/css">
+	<script type="text/javascript" src="../../../jquery-1.3.2.js"></script>
+	<script type="text/javascript" src="../../../ui/ui.core.js"></script>
+	<script type="text/javascript" src="../../../ui/ui.spinner.js"></script>
+	<script type="text/javascript">
+	$(function() {
+		$('#spinner1').spinner();
+		$('#spinner1min').text($('#spinner1').spinner('option','min'));
+		$('#spinner1max').text($('#spinner1').spinner('option','max'));
+		$('#spinner1step').text($('#spinner1').spinner('option','step'));
+		
+		$('#spinner2').spinner();
+		$('#spinner2min').text($('#spinner2').spinner('option','min'));
+		$('#spinner2max').text($('#spinner2').spinner('option','max'));
+		$('#spinner2step').text($('#spinner2').spinner('option','step'));
+		
+		$('#spinner3').spinner({ min: 0, max: 50, step: 5 });
+		$('#spinner3min').text($('#spinner3').spinner('option','min'));
+		$('#spinner3max').text($('#spinner3').spinner('option','max'));
+		$('#spinner3step').text($('#spinner3').spinner('option','step'));
+	});
+	</script>
+</head>
+<body>
+
+<table class="ui-widget ui-widget-content">
+<colgroup>
+<col width="200">
+<col width="200">
+<col width="200">
+</colgroup>
+<thead class="ui-widget-header">
+<tr>
+	<th>Description</th>
+	<th>Spinner</th>
+	<th>Values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+
+	<td>Default min, max, step values:</td>
+	<td><input id="spinner1" type="text"></td>	
+	<td>
+		<strong>Min:</strong> <span id="spinner1min"></span><br>
+		<strong>Max:</strong> <span id="spinner1max"></span><br>
+		<strong>Step:</strong> <span id="spinner1step"></span><br>
+	</td>
+</tr>
+
+<tr>
+	<td>With HTML5 attributes:</td>
+	<td><input id="spinner2" type="number" max="10" min="-10" step="1"></td>
+	<td>
+		<strong>Min:</strong> <span id="spinner2min"></span><br>
+		<strong>Max:</strong> <span id="spinner2max"></span><br>
+		<strong>Step:</strong> <span id="spinner2step"></span><br>
+	</td>
+</tr>
+
+<tr>
+	<td>With HTML5 attributes and options (options should override attribute values):</td>
+	<td><input id="spinner3" type="number" max="10" min="-10" step="1"></td>
+	<td>
+		<strong>Min:</strong> <span id="spinner3min"></span><br>
+		<strong>Max:</strong> <span id="spinner3max"></span><br>
+		<strong>Step:</strong> <span id="spinner3step"></span><br>
+	</td>
+</tr>
+</tbody>
+	
+</table>
+
+</body>
+</html>

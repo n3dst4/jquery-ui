@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Spinner Visual Test : Spinner method stepUp/stepDown</title>
+	<link rel="stylesheet" href="../visual.css" type="text/css">
+	<link rel="stylesheet" href="../../../themes/base/ui.all.css" type="text/css">
+	<script type="text/javascript" src="../../../jquery-1.3.2.js"></script>
+	<script type="text/javascript" src="../../../ui/ui.core.js"></script>
+	<script type="text/javascript" src="../../../ui/ui.spinner.js"></script>
+	<script type="text/javascript">
+	$(function() {
+		$('#spinner').spinner();
+		$('#stepUpButton').click(function() {
+			$('#spinner')
+				.spinner('option','step',$('#step').val())
+				.spinner('stepUp', $('#steps').val());
+		});
+		$('#stepDownButton').click(function() {
+			$('#spinner')
+				.spinner('option','step',$('#step').val())
+				.spinner('stepDown', $('#steps').val());
+		});
+	});
+	</script>
+</head>
+<body>
+<div class="ui-widget">
+	
+<p><input id="spinner" type="text"></p>
+<p>step size: <input id="step" type="text" value="1" size="5"></p>
+<p>steps: <input id="steps" type="text" value="1" size="5"></p>
+<p>
+	<button id="stepUpButton" class="ui-state-default ui-corner-all">Step Up</button>
+	<button id="stepDownButton" class="ui-state-default ui-corner-all">Step Down</button>
+</p>
+</div>
+</body>
+</html>

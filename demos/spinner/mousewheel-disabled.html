@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>jQuery UI Spinner - Default functionality</title>
+	<link type="text/css" href="../../themes/base/ui.all.css" rel="stylesheet" />
+	<script type="text/javascript" src="../../jquery-1.3.2.js"></script>
+	<script type="text/javascript" src="../../external/mousewheel/jquery.mousewheel.min.js"></script>
+	<script type="text/javascript" src="../../ui/ui.core.js"></script>
+	<script type="text/javascript" src="../../ui/ui.spinner.js"></script>
+	<link type="text/css" href="../demos.css" rel="stylesheet" />
+	<script type="text/javascript">
+	$(function() {
+		$("#s1").spinner({mouseWheel: false});
+		
+		$("#enable").toggle(function() {
+			$("#s1").spinner("option", "mouseWheel", true);
+		}, function() {
+			$("#s1").spinner("option", "mouseWheel", false);			
+		})
+		
+		$(".ui-button").hover(function() {
+			$(this).addClass("ui-state-hover");
+		}, function() {
+			$(this).removeClass("ui-state-hover");
+		});
+	});
+	</script>
+</head>
+<body>
+
+<div class="demo">
+
+<p><label for="s1">Select a value:</label>
+<input id="s1" name="value" /></p>
+
+<p>
+<button id="enable" class="ui-button ui-state-default ui-corner-all">Toggle enable/disable Mousewheel</button>
+</p>
+
+</div><!-- End demo -->
+
+<div class="demo-description">
+<p>
+Default spinner with Mousewheel disabled. This demonstrates the ability to target individual spinners to disable the mousewheel interaction if necessary.
+</p>
+</div><!-- End demo-description -->
+
+</body>
+</html>

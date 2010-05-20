@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Spinner Visual Test Page: Spinner ARIA test</title>
+	<link rel="stylesheet" href="../visual.css" type="text/css" />
+	<link rel="stylesheet" href="../../../themes/base/ui.all.css" type="text/css">
+	<style type="text/css">
+		input { width: 50px; }
+	</style>
+	<script type="text/javascript" src="../../../jquery-1.3.2.js"></script>
+	<script type="text/javascript" src="../../../ui/ui.core.js"></script>
+	<script type="text/javascript" src="../../../ui/ui.spinner.js"></script>
+	<script type="text/javascript">
+	$(function() {
+		$('#spinner').spinner();
+		$('button').click(function() {
+			$('#spinner')
+				.spinner('option', {
+					min: $('#min').val(), 
+					max: $('#max').val(), 
+					step: $('#step').val()
+				});
+		});
+	});
+	</script>
+</head>
+<body>
+<div class="ui-widget">
+	
+<input id="spinner" type="number" min="-100" max="100" value="5" step="2">
+
+<p>Min: <input id="min" type="text" name="min" value="-100"></p>
+<p>Max: <input id="max" type="text" name="max" value="100"></p>
+<p>Step: <input id="step" type="text" name="step" value="2"></p>
+<p><button>Update spinner</button></p>
+
+</div>
+</body>
+</html>

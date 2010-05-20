@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Spinner Visual Test : Spinner method pageUp/pageDown</title>
+	<link rel="stylesheet" href="../visual.css" type="text/css">
+	<link rel="stylesheet" href="../../../themes/base/ui.all.css" type="text/css">
+	<script type="text/javascript" src="../../../jquery-1.3.2.js"></script>
+	<script type="text/javascript" src="../../../ui/ui.core.js"></script>
+	<script type="text/javascript" src="../../../ui/ui.spinner.js"></script>
+	<script type="text/javascript">
+	$(function() {
+		$('#spinner').spinner({step: 2, page: 5});
+		
+		$('#step').change(function(){
+			$('#spinner')
+				.spinner('option','step',$(this).val());
+		});
+
+		$('#page').change(function(){
+			$('#spinner')
+				.spinner('option','page',$(this).val());
+		});
+		
+		$('#pageUpButton').click(function() {
+			$('#spinner')
+				.spinner('option','step',$('#step').val())
+				.spinner('option','page',$('#page').val())
+				.spinner('pageUp', $('#pages').val());
+		});
+		
+		$('#pageDownButton').click(function() {
+			$('#spinner')
+				.spinner('option','step',$('#step').val())
+				.spinner('option','page',$('#page').val())
+				.spinner('pageDown', $('#pages').val());
+		});
+	});
+	</script>
+</head>
+<body>
+<div class="ui-widget">
+	
+<p><input id="spinner" type="text"></p>
+<p>step size: <input id="step" type="text" value="2" size="5"></p>
+<p>page: <input id="page" type="text" value="5" size="5"></p>
+<p>page jump: <input id="pages" type="text" value="1" size="5"></p>
+<p>
+	<button id="pageUpButton" class="ui-state-default ui-corner-all">Page Up</button>
+	<button id="pageDownButton" class="ui-state-default ui-corner-all">Page Down</button>
+</p>
+</div>
+</body>
+</html>

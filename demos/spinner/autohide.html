@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>jQuery UI Spinner - Hiding</title>
+	<link type="text/css" href="../../themes/base/ui.all.css" rel="stylesheet" />
+	<script type="text/javascript" src="../../jquery-1.3.2.js"></script>
+	<script type="text/javascript" src="../../external/mousewheel/jquery.mousewheel.min.js"></script>
+	<script type="text/javascript" src="../../ui/ui.core.js"></script>
+	<script type="text/javascript" src="../../ui/ui.spinner.js"></script>
+	<link type="text/css" href="../demos.css" rel="stylesheet" />
+	<script type="text/javascript">
+	$(function() {
+		function getSpeed() {
+			var speed = $("#speed").val();
+			var i = parseInt(speed);
+			return isNaN(i) ? speed : i;
+		}
+	
+		$("#s1, #s2").spinner({buttons: 'auto'});
+		
+		$("#autohide").toggle(function() {
+			$("#s1, #s2").spinner("option", "buttons", 'show');
+			$("#speedp").css("display", "none");
+		}, function() {
+			$("#s1, #s2").spinner("option", "buttons", getSpeed());
+			$("#speedp").css("display", "block");
+		});
+		$("#speed").change(function() {
+			$("#s1, #s2").spinner("option", "buttons", getSpeed());
+		});
+	});
+	</script>
+</head>
+<body>
+
+<div class="demo">
+
+<p><label for="s1">Select a value:</label>
+<input id="s1" name="value" /></p>
+
+<p><label for="s2">Select a value:</label>
+<input id="s2" name="value" /></p>
+
+<p>
+<button id="autohide" class="ui-button ui-state-default ui-corner-all">Toggle auto hide</button>
+</p>
+
+<p id="speedp"><label for="speed">Select show/hide speed:</label>
+<select id="speed">
+	<option value="0">0</option>
+	<option value="50">50</option>
+	<option value="100">100</option>
+	<option value="150">150</option>
+	<option value="fast" selected="selected">200 - Fast</option>
+	<option value="250">250</option>
+	<option value="300">300</option>
+	<option value="350">350</option>
+	<option value="400">400</option>
+	<option value="450">450</option>
+	<option value="500">500</option>
+	<option value="550">550</option>
+	<option value="slow">600 - Slow</option>
+</select>
+</p>
+
+</div><!-- End demo -->
+
+<div class="demo-description">
+<p>
+Hiding spinner.
+</p>
+</div><!-- End demo-description -->
+
+</body>
+</html>

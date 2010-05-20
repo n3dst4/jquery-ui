@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Spinner Visual Test Page</title>
+	<link rel="stylesheet" href="../visual.css" type="text/css" />
+	<link rel="stylesheet" href="../../../themes/base/ui.all.css" type="text/css">
+	<style type="text/css">
+		input { width: 50px; }
+	</style>
+	<script type="text/javascript" src="../../../jquery-1.3.2.js"></script>
+	<script type="text/javascript" src="../../../external/mousewheel/jquery.mousewheel.min.js"></script>
+	<script type="text/javascript" src="../../../ui/ui.core.js"></script>
+	<script type="text/javascript" src="../../../ui/ui.spinner.js"></script>
+	<script type="text/javascript">
+	$(function() {
+		$('#spinner1').spinner();
+		
+		// event callbacks
+		$('#spinner2').spinner({
+			start: function(event, ui) {
+				console.log(event, ui);
+			},
+			spin: function(event, ui) {
+				console.log(event, ui);
+				return false;
+			},
+			stop: function(event) {
+				console.log(event);
+			},
+			change: function(event) {
+				console.log(event);
+			}
+		});
+		// hook via bind
+		$('#spinner3').spinner().bind('spinstart spin spinstop spinchange', function(event, ui) {
+			
+		});		
+	});
+	</script>
+</head>
+<body>
+
+<p><label for="spinner1">Basic:</label> <input id="spinner1"></p>
+<p><label for="spinner2">Basic with event callbacks:</label> <input id="spinner2"></p>
+<p><label for="spinner2">Basic with event bind:</label> <input id="spinner3"></p>
+</body>
+</html>

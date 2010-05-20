@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Spinner Visual Test : Default</title>
+	<link rel="stylesheet" href="../visual.css" type="text/css" />
+	<link rel="stylesheet" href="../../../themes/base/ui.all.css" type="text/css">
+	<script type="text/javascript" src="../../../jquery-1.3.2.js"></script>
+	<script type="text/javascript" src="../../../ui/ui.core.js"></script>
+	<script type="text/javascript" src="../../../ui/ui.spinner.js"></script>
+	<script type="text/javascript">
+	$(function() {
+		$('#s1').spinner();
+		
+		$("#disable").toggle(function() {
+			$("#s1").spinner("disable");
+		}, function() {
+			$("#s1").spinner("enable");
+		});
+		$("#destroy").toggle(function() {
+			$("#s1").spinner("destroy");
+		}, function() {
+			$("#s1").spinner();
+		});
+		$("#getvalue").click(function() {
+			alert($("#s1").spinner("value"));
+		});
+		$("#setvalue").click(function() {
+			$("#s1").spinner("value", 5);
+		});
+		
+		$(".ui-button").hover(function() {
+			$(this).addClass("ui-state-hover");
+		}, function() {
+			$(this).removeClass("ui-state-hover");
+		});
+		
+				
+		$('#s2').spinner({ items: '#data' });
+	});
+	</script>
+</head>
+<body>
+
+<p><select id="s1">
+	<option value="1">item 1</option>
+	<option value="2">item 2</option>
+	<option value="3">item 3</option>
+	<option value="4">item 4</option>
+	<option value="5">item 5</option>
+	<option value="6">item 6</option>
+	<option value="7">item 7</option>
+	<option value="8">item 8</option>
+	<option value="9">item 9</option>
+	<option value="10">item 10</option>
+</select></p>
+
+<p>
+<button id="disable" class="ui-button ui-state-default ui-corner-all">Toggle disable/enable</button>
+<button id="destroy" class="ui-button ui-state-default ui-corner-all">Toggle widget</button>
+</p>
+
+<p>
+<button id="getvalue" class="ui-button ui-state-default ui-corner-all">Get value</button>
+<button id="setvalue" class="ui-button ui-state-default ui-corner-all">Set value to 5</button>
+</p>
+
+
+<p><input id="s2">
+<select id="data">
+	<option value="1">item 1</option>
+	<option value="2">item 2</option>
+	<option value="3">item 3</option>
+	<option value="4">item 4</option>
+	<option value="5">item 5</option>
+	<option value="6">item 6</option>
+	<option value="7">item 7</option>
+	<option value="8">item 8</option>
+	<option value="9">item 9</option>
+	<option value="10">item 10</option>
+</select></p>
+
+</body>
+</html>
