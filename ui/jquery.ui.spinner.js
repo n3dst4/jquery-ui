@@ -20,8 +20,20 @@ var hover = 'ui-state-hover',
 	uiSpinnerClasses = 'ui-spinner ui-widget ui-corner-all ';
 
 $.widget('ui.spinner', {
-	_create: function() {		
-		this.currVal = 0;
+	_create: function() {
+		var o = this.options,
+			prevVal = this.element.val();
+		
+		this.currVal = o.parse.call(o,
+							(o.initValue !== null) ? o.initValue :
+								(prevVal !== "") ? prevVal :
+								o.defaultValue
+						);
+		
+		this.value(this.currVal, true);
+		
+		//debugger;
+		
 		this._draw();
 		this._mousewheel();
 		if (this.options.showButtons !== "always") {
@@ -157,6 +169,7 @@ $.widget('ui.spinner', {
 						|| key == KEYS.PAGE_UP
 						|| key == KEYS.RIGHT) ? 1 : -1;
 			this.source = "keyboard";
+			this.sourceEvent = event;
 			this._spin(direction, paging);
 			return false;
 		}
@@ -185,6 +198,12 @@ $.widget('ui.spinner', {
 		var inc, next,
 			o = this.options,
 			self = this;
+			
+		//debugger;
+			
+		if (! this.timer) {
+			this._start();
+		}
 		this.spinCounter = this.spinCounter || 0;
 		this.spinStage = this.spinStage || 0;
 		inc = o.increments[this.spinStage];
@@ -199,6 +218,11 @@ $.widget('ui.spinner', {
 			this.value(next);
 			this.spinCounter++;
 		}
+	},
+	
+	_start: function () {
+		this._readValue();
+		this._trigger("start", this.sourceEvent, {value: this.currVal});
 	},
 	
 	_stop: function () {
@@ -317,7 +341,7 @@ $.extend($.ui.spinner.prototype, {
 	version: "@VERSION",
 	eventPrefix: "spin",
 	options: {
-		initValue: 0,
+		initValue: null,
 		defaultValue: 0,
 		precision: 0,
 		radixPoint: ".",
@@ -331,15 +355,26 @@ $.extend($.ui.spinner.prototype, {
 					 {count: 50, increment: 1, page: 10, delay: 50},
 					 {count: null, increment: 10, page: 50, delay: 50}],
 		format: function (value, precision, radixPoint) {
-			return value.toFixed(precision).replace(".", radixPoint);
+			if (typeof(value) === "number") {
+				return value.toFixed(precision).replace(".", radixPoint);
+			}
+			else {
+				return "";
+			}
 		},
 		parse: function (text) {
 			return parseFloat(text);
 		},
 		next: function (currentValue, amount, direction, min, max, step) {
-			return ((direction > 0 && currentValue == max)
-					|| (direction < 0 && currentValue == min)) ? false :
-				Math.max(min, Math.min(max, currentValue + amount * step * direction)); 
+			var n;
+			if ((direction > 0 && currentValue == max)
+					|| (direction < 0 && currentValue == min)) { return false; }
+			else {
+				n = currentValue + amount * step * direction;
+				if (max !== null) { n = Math.min(max, n); }
+				if (min !== null) { n = Math.max(min, n); }
+				return n;
+			}
 		}		
 	}
 });

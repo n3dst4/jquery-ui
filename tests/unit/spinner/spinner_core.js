@@ -70,13 +70,13 @@ test("keydown UP on input, increases value not greater than max", function() {
 	el = $("#spin");
 	options = {
 		max:100,
-		value:50,
+		initValue:50,
 		step:10
 	}
 	el.spinner(options);
 	
-	simulateKeyDownUp(el, $.ui.keyCode.UP);
 	
+	simulateKeyDownUp(el, $.ui.keyCode.UP);
 	equals(el.val(), 60);
 	
 	for (i = 0; i<11; i++) {
@@ -98,11 +98,10 @@ test("keydown DOWN on input, decreases value not less than min", function() {
 	el = $("#spin");
 	options = {
 		min:-100,
-		value:50,
+		initValue:50,
 		step:10
 	}
 	el.spinner(options);
-
 	simulateKeyDownUp(el, $.ui.keyCode.DOWN);
 	
 	equals(el.val(), 40);
@@ -127,26 +126,26 @@ test("keydown PGUP on input, increases value not greater than max", function() {
 	el = $("#spin");
 	options = {
 		max:100,
-		value:0,
-		step:10
+		initValue:0,
+		step:1,
 	}
 	el.spinner(options);
 		
 	simulateKeyDownUp(el, $.ui.keyCode.PAGE_UP);
 	
-	equals(el.val(), 50);
+	equals(el.val(), 10);
 	
 	for (i = 0; i<5; i++) {
 		simulateKeyDownUp(el, $.ui.keyCode.PAGE_UP);	
 	}
 	
-	equals(el.val(), 100);
+	equals(el.val(), 60);
 
 	el.val(0);
 	
 	simulateKeyDownUp(el, $.ui.keyCode.PAGE_UP);
 	
-	equals(el.val(), 50);
+	equals(el.val(), 10);
 });
 
 test("keydown PGDN on input, decreases value not less than min", function() {
@@ -155,26 +154,26 @@ test("keydown PGDN on input, decreases value not less than min", function() {
 	el = $("#spin");
 	options = {
 		min:-100,
-		value:0,
-		step:10
+		initValue:0,
+		step:1
 	}
 	el.spinner(options);
 		
 	simulateKeyDownUp(el, $.ui.keyCode.PAGE_DOWN);
 	
-	equals(el.val(), -50);
+	equals(el.val(), -10);
 	
 	for (i = 0; i<5; i++) {
 		simulateKeyDownUp(el, $.ui.keyCode.PAGE_DOWN);	
 	}
 	
-	equals(el.val(), -100);
+	equals(el.val(), -60);
 	
 	el.val(0);
 	
 	simulateKeyDownUp(el, $.ui.keyCode.PAGE_DOWN);
 	
-	equals(el.val(), -50);
+	equals(el.val(), -10);
 });
 
 test("hold SHIFT and keydown UP, increments value but no greater than max", function() {
