@@ -21,21 +21,36 @@ var hover = 'ui-state-hover',
 
 $.widget('ui.spinner', {
 	_create: function() {
-		var o = this.options,
+		var attrVal,
+			el = this.element,
+			o = this.options,
 			prevVal = this.element.val();
-		
-		this.currVal = o.parse.call(o,
-							(o.initValue !== null) ? o.initValue :
+			
+		o.value = this.currVal = o.parse.call(o,
+								(o.value !== null) ? o.value :
 								(prevVal !== "") ? prevVal :
-								o.defaultValue
-						);
+								(o.min !== null) ? o.min :
+								(o.max !== null) ? o.max :
+								0);
+
+		// html5
+		$.each(["min", "max", "step"], function (i, name) {
+			attrVal = el.attr(name);
+			if (o[name] === null) {
+				if (typeof attrVal !== "undefined") {
+					o[name] = attrVal;
+				}
+			}
+			else {
+				el.attr(name, o[name]);
+			}
+		});
+		
+		if (o.step === null) { o.step = 1; el.attr("step", "1"); }
 		
 		this.value(this.currVal, true);
 		
-		//debugger;
-		
 		this._draw();
-		this._mousewheel();
 		if (this.options.showButtons !== "always") {
 			this.buttons.hide();
 		}
@@ -44,13 +59,15 @@ $.widget('ui.spinner', {
 	_draw: function() {
 		var self = this,
 			o = self.options,
-			outerWidth = self.element.outerWidth(),
-			inputWidth = self.element.width() - o.buttonWidth,
-			marginLeft = self.element.css("margin-left"),
-			marginRight = self.element.css("margin-right");
+			el = self.element,
+			outerWidth = el.outerWidth(),
+			inputWidth = el.width() - o.buttonWidth,
+			marginLeft = el.css("margin-left"),
+			marginRight = el.css("margin-right")
+			outerHeight = el.outerHeight();
 
 		
-		var uiSpinner = self.element
+		var uiSpinner = el
 			.addClass('ui-spinner-input')
 			.attr('autocomplete', 'off') // switch off autocomplete in opera
 			.wrap(self._uiSpinnerHtml())
@@ -75,7 +92,8 @@ $.widget('ui.spinner', {
 				.width(outerWidth)
 				.css({
 					"margin-left": marginLeft,
-					"margin-right": marginRight				
+					"margin-right": marginRight,
+					"height": outerHeight
 				})				
 				.hover(function() {
 					//self._hide(false);
@@ -90,7 +108,7 @@ $.widget('ui.spinner', {
 		}
 
 		// element bindings
-		this.element
+		el
 			// Give the spinner casing a unique id only if one exists in original input 
 			// - this should aid targetted customisations if a page contains multiple instances
 			.attr('id', function(){
@@ -131,6 +149,15 @@ $.widget('ui.spinner', {
 				$(this).removeClass(active + ' ' + hover);
 			});
 			
+			
+		// mousewheel bindings
+		if ($.fn.mousewheel && self.options.useMouseWheel) {
+			this.element.mousewheel(function(event, delta) {
+				self._mouseWheel(event, delta);
+			});
+		}
+			
+			
 		// ie doesn't fire mousedown on 2nd click, so have to fake it
 		if ($.browser.msie) {
 			this.buttons.bind("dblclick", function () {
@@ -140,18 +167,21 @@ $.widget('ui.spinner', {
 		}
 		self.uiSpinner = uiSpinner;
 	},
+	
 	_uiSpinnerHtml: function () {
 		return '<span role="spinbutton" class="' + uiSpinnerClasses + 
 				(this.options.spinnerClass || '') + 
 				' ui-spinner-' + this.options.dir + 
 				'"></span>';
 	},
+	
 	_buttonHtml: function () {
 		return '<a class="ui-spinner-button ui-spinner-up ui-state-default ui-corner-t' + this.options.dir.substr(-1,1) + 
 				'"><span class="ui-icon ui-icon-triangle-1-n">&#9650;</span></a>' +
 				'<a class="ui-spinner-button ui-spinner-down ui-state-default ui-corner-b' + this.options.dir.substr(-1,1) + 
 				'"><span class="ui-icon ui-icon-triangle-1-s">&#9660;</span></a>';
 	},
+	
 	_keyDown: function (event) {
 		var paging, direction,
 			key = event.keyCode,
@@ -199,8 +229,6 @@ $.widget('ui.spinner', {
 			o = this.options,
 			self = this;
 			
-		//debugger;
-			
 		if (! this.timer) {
 			this._start();
 		}
@@ -214,6 +242,8 @@ $.widget('ui.spinner', {
 
 		next = o.next(this.currVal, inc[paging?"page":"increment"], direction, o.min, o.max, o.step);
 		if (next !== false) {
+			this._trigger("spin", this.sourceEvent, {value: this.currValue, next: next});
+			if (this.timer) { clearTimeout(this.timer); }
 			this.timer = setTimeout(function () {self._spin(direction, paging)}, inc.delay);
 			this.value(next);
 			this.spinCounter++;
@@ -262,27 +292,13 @@ $.widget('ui.spinner', {
 	},
 	
 	/// XXX next
-	_mousewheel: function() {
+	_mouseWheel: function(event, delta) {
 		var self = this;
-		if ($.fn.mousewheel && self.options.mouseWheel) {
-			this.element.mousewheel(function(event, delta) {
-				delta = ($.browser.opera ? -delta / Math.abs(delta) : delta);
-				if (!self._start(event)) {
-					return false;
-				}
-				self._spin((delta > 0 ? 1 : -1) * self._step(), event);					
-				if (self.timeout) {
-					window.clearTimeout(self.timeout);
-				}
-				self.timeout = window.setTimeout(function() {
-					if (self.spinning) {
-						self._stop(event);
-						self._change(event);						
-					}
-				}, 400);
-				event.preventDefault();			
-			});			
-		}
+		delta = ($.browser.opera ? -delta / Math.abs(delta) : delta);
+		
+		self._spin((delta > 0 ? 1 : -1), event.shiftKey);
+		self._stop();
+		event.preventDefault();			
 	},
 	
 	_aria: function() {
@@ -334,6 +350,12 @@ $.widget('ui.spinner', {
 			.parent()
 				.addClass('ui-spinner-disabled ui-state-disabled');
 		this.options.disabled = true;
+	},
+	
+	_setOption: function (name, value) {
+		this.options[name] = value;
+		if (name === "min" || name === "max") { this._aria(); }
+		
 	}
 });
 
@@ -341,15 +363,15 @@ $.extend($.ui.spinner.prototype, {
 	version: "@VERSION",
 	eventPrefix: "spin",
 	options: {
-		initValue: null,
-		defaultValue: 0,
+		value: null,
 		precision: 0,
 		radixPoint: ".",
 		min: null,
 		max: null,
 		dir: "ltr",
-		step: 1,
+		step: null,
 		showButtons: "always",
+		useMouseWheel: true,
 		buttonWidth: 16,
 		increments: [{count: 2, increment: 1, page: 10, delay: 500},
 					 {count: 50, increment: 1, page: 10, delay: 50},
