@@ -3,24 +3,23 @@
  */
 
 var spinner_defaults = {
-	buttons: 'show',
-	currency: false,
-	dir: 'ltr',
-	disabled: false,
-	groupSeparator: '',
-	incremental: true,
-	max: null,
-	min: null,
-	mouseWheel: true,
-	padding: 0,
-	page: 5,
+	value: null,
 	precision: 0,
-	radix: 10,
-	radixPoint: '.',
-	spinnerClass: null,
+	radixPoint: ".",
+	min: null,
+	max: null,
+	dir: "ltr",
 	step: null,
-	value: 0,
-	width: false
+	page: 10,
+	showButtons: "always",
+	useMouseWheel: true,
+	buttonWidth: 16,
+	increments: [{count: 2, increment: 1, delay: 500},
+				 {count: 50, increment: 1, delay: 50},
+				 {count: null, increment: 10, delay: 50}],
+	format: $.noop,
+	parse: $.noop,
+	next: $.noop
 };
 
 commonWidgetTests('spinner', { defaults: spinner_defaults });

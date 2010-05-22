@@ -7,15 +7,15 @@ module("spinner: methods");
 
 test("disable", function() {
 	expect(14);
-
+	$("#spin").spinner("destroy");
 	el = $("#spin").spinner({ disabled: false });
 	var val = el.val();
 	
-	ok(!wrapper().hasClass(".ui-spinner-disabled"), "before: wrapper does not have ui-spinner-disabled class");
+	ok(!wrapper().hasClass("ui-spinner-disabled"), "before: wrapper does not have ui-spinner-disabled class");
 	ok(!box().is(':disabled'), "before: input does not have disabled attribute");
 
 	el.spinner("disable");
-	ok(wrapper().hasClass(".ui-spinner-disabled"), "after: wrapper has ui-spinner-disabled class");
+	ok(wrapper().hasClass("ui-spinner-disabled"), "after: wrapper has ui-spinner-disabled class");
 	ok(box().is(':disabled'), "after: input has disabled attribute");
 		
 	simulateKeyDownUp(el, $.ui.keyCode.UP);	
@@ -43,7 +43,7 @@ test("disable", function() {
 	equals(5, el.val(), "script - stepDown 1 step changes value");
 
 	el.spinner('pageUp');
-	equals(10, el.val(), "script - pageUp 1 page changes value");
+	equals(15, el.val(), "script - pageUp 1 page changes value");
 
 	el.spinner('pageDown');
 	equals(5, el.val(), "script - pageDown 1 page changes value");
@@ -56,12 +56,12 @@ test("enable", function() {
 	el = $("#spin").spinner({ disabled: true });
 	var val = el.val();
 	
-	ok(wrapper().hasClass(".ui-spinner-disabled"), "before: wrapper has ui-spinner-disabled class");
+	ok(wrapper().hasClass("ui-spinner-disabled"), "before: wrapper has ui-spinner-disabled class");
 	ok(box().is(':disabled'), "before: input has disabled attribute");
 	
 	el.spinner("enable");
 	
-	ok(!wrapper().hasClass(".ui-spinner-disabled"), "after: wrapper does not have ui-spinner-disabled class");
+	ok(!wrapper().hasClass("ui-spinner-disabled"), "after: wrapper does not have ui-spinner-disabled class");
 	ok(!box().is(':disabled'), "after: input does not have disabled attribute");
 
 	simulateKeyDownUp(el, $.ui.keyCode.UP);
@@ -71,7 +71,7 @@ test("enable", function() {
 	equals(0, el.val(), "keyboard - value changes on key DOWN");
 
 	simulateKeyDownUp(el, $.ui.keyCode.PAGE_UP);
-	equals(5, el.val(), "keyboard - value changes on key PGUP");
+	equals(10, el.val(), "keyboard - value changes on key PGUP");
 
 	simulateKeyDownUp(el, $.ui.keyCode.PAGE_DOWN);
 	equals(0, el.val(), "keyboard - value changes on key PGDN");
@@ -89,7 +89,7 @@ test("enable", function() {
 	equals(5, el.val(), "script - stepDown 1 step changes value");
 
 	el.spinner('pageUp');
-	equals(10, el.val(), "script - pageUp 1 page changes value");
+	equals(15, el.val(), "script - pageUp 1 page changes value");
 
 	el.spinner('pageDown');
 	equals(5, el.val(), "script - pageDown 1 page changes value");	
@@ -102,12 +102,12 @@ test("pageDown", function() {
 	el = $('#spin').spinner({ step: 2, page: 5, value: 0, min: -100 });
 
 	el.spinner('pageDown');
-	equals(el.val(), -10, "pageDown 1 page");
+	equals(el.val(), -5, "pageDown 1 page");
 
 	el.spinner('pageDown', 3);
-	equals(el.val(), -40, "pageDown 3 pages");
+	equals(el.val(), -20, "pageDown 3 pages");
 	
-	el.val(-91).spinner('pageDown');
+	el.val(-97).spinner('pageDown');
 	equals(el.val(), -100, "value close to min and pageDown 1 page");
 	
 	el.spinner('pageDown', 10);
@@ -120,12 +120,12 @@ test("pageUp", function() {
 	el = $('#spin').spinner({ step: 2, page: 5, value: 0, max: 100 });
 
 	el.spinner('pageUp');
-	equals(el.val(), 10, "pageUp 1 page");
+	equals(el.val(), 5, "pageUp 1 page");
 
 	el.spinner('pageUp', 3);
-	equals(el.val(), 40, "pageUp 3 pages");
+	equals(el.val(), 20, "pageUp 3 pages");
 
-	el.val(91).spinner('pageUp');
+	el.val(97).spinner('pageUp');
 	equals(el.val(), 100, "value close to max and pageUp 1 page");
 	
 	el.spinner('pageUp', 10);

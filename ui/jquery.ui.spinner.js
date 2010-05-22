@@ -224,14 +224,18 @@ $.widget('ui.spinner', {
 		this._stop();
 	},
 	
-	_spin: function (direction, paging) {
+	_spin: function (direction, paging, force) {
 		var inc, next,
 			o = this.options,
 			self = this;
+
+		if (o.disabled && ! force)  return;
 			
 		if (! this.timer) {
 			this._start();
 		}
+		
+		// counter and increment stage
 		this.spinCounter = this.spinCounter || 0;
 		this.spinStage = this.spinStage || 0;
 		inc = o.increments[this.spinStage];
@@ -240,7 +244,8 @@ $.widget('ui.spinner', {
 		}
 		inc = o.increments[this.spinStage];
 
-		next = o.next(this.currVal, inc[paging?"page":"increment"], direction, o.min, o.max, o.step);
+		// 
+		next = o.next(this.currVal, inc.increment * (paging?o.page:o.step), direction, o.min, o.max);
 		if (next !== false) {
 			this._trigger("spin", this.sourceEvent, {value: this.currValue, next: next});
 			if (this.timer) { clearTimeout(this.timer); }
@@ -356,7 +361,32 @@ $.widget('ui.spinner', {
 		this.options[name] = value;
 		if (name === "min" || name === "max") { this._aria(); }
 		
+	},
+	
+	stepUp: function (count) {
+		this._pretend(1, false, count);
+	},
+	
+	stepDown: function (count) {
+		this._pretend(-1, false, count);
+	},
+	
+	pageUp: function (count) {
+		this._pretend(1, true, count);
+	},
+	
+	pageDown: function (count) {
+		this._pretend(-1, true, count);
+	},
+	
+	_pretend: function(direction, paging, count) {
+		count = count || 1;
+		while (count --) {
+			this._spin(direction, paging, true);
+		}
+		this._stop();
 	}
+	
 });
 
 $.extend($.ui.spinner.prototype, {
@@ -370,12 +400,13 @@ $.extend($.ui.spinner.prototype, {
 		max: null,
 		dir: "ltr",
 		step: null,
+		page: 10,
 		showButtons: "always",
 		useMouseWheel: true,
 		buttonWidth: 16,
-		increments: [{count: 2, increment: 1, page: 10, delay: 500},
-					 {count: 50, increment: 1, page: 10, delay: 50},
-					 {count: null, increment: 10, page: 50, delay: 50}],
+		increments: [{count: 2, increment: 1, delay: 500},
+					 {count: 50, increment: 1, delay: 50},
+					 {count: null, increment: 10, delay: 50}],
 		format: function (value, precision, radixPoint) {
 			if (typeof(value) === "number") {
 				return value.toFixed(precision).replace(".", radixPoint);
@@ -387,12 +418,12 @@ $.extend($.ui.spinner.prototype, {
 		parse: function (text) {
 			return parseFloat(text);
 		},
-		next: function (currentValue, amount, direction, min, max, step) {
+		next: function (currentValue, amount, direction, min, max) {
 			var n;
 			if ((direction > 0 && currentValue == max)
 					|| (direction < 0 && currentValue == min)) { return false; }
 			else {
-				n = currentValue + amount * step * direction;
+				n = currentValue + amount * direction;
 				if (max !== null) { n = Math.min(max, n); }
 				if (min !== null) { n = Math.max(min, n); }
 				return n;
