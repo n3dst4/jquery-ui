@@ -65,34 +65,34 @@ test("enable", function() {
 	ok(!box().is(':disabled'), "after: input does not have disabled attribute");
 
 	simulateKeyDownUp(el, $.ui.keyCode.UP);
-	equals(1, el.val(), "keyboard - value changes on key UP");
+	equals(el.val(), 1, "keyboard - value changes on key UP");
 
 	simulateKeyDownUp(el, $.ui.keyCode.DOWN);
-	equals(0, el.val(), "keyboard - value changes on key DOWN");
+	equals(el.val(), 0, "keyboard - value changes on key DOWN");
 
 	simulateKeyDownUp(el, $.ui.keyCode.PAGE_UP);
-	equals(10, el.val(), "keyboard - value changes on key PGUP");
+	equals(el.val(), 10, "keyboard - value changes on key PGUP");
 
 	simulateKeyDownUp(el, $.ui.keyCode.PAGE_DOWN);
-	equals(0, el.val(), "keyboard - value changes on key PGDN");
+	equals(el.val(), 0, "keyboard - value changes on key PGDN");
 	
 	upButton().trigger('mousedown').trigger('mouseup');
-	equals(1, el.val(), "mouse - value changes on clicking up button");
+	equals(el.val(), 1, "mouse - value changes on clicking up button");
 
 	downButton().trigger('mousedown').trigger('mouseup');
-	equals(0, el.val(), "mouse - value changes on clicking down button");
+	equals(el.val(), 0, "mouse - value changes on clicking down button");
 	
 	el.spinner('stepUp', 6);
-	equals(6, el.val(), "script - stepUp 6 steps changes value");
+	equals(el.val(), 6, "script - stepUp 6 steps changes value");
 
 	el.spinner('stepDown');
-	equals(5, el.val(), "script - stepDown 1 step changes value");
+	equals(el.val(), 5, "script - stepDown 1 step changes value");
 
 	el.spinner('pageUp');
-	equals(15, el.val(), "script - pageUp 1 page changes value");
+	equals(el.val(), 15, "script - pageUp 1 page changes value");
 
 	el.spinner('pageDown');
-	equals(5, el.val(), "script - pageDown 1 page changes value");	
+	equals(el.val(), 5,  "script - pageDown 1 page changes value");	
 
 });
 

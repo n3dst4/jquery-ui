@@ -29,9 +29,8 @@ test("buttons - hide", function() {
 	
 	el = $('#spin');	
 	el.spinner({ 
-		buttons: 'hide' 
+		showButtons: 'never' 
 	});
-	
 	ok(upButton().is(':hidden'), "hide - before hover: up button hidden");
 	ok(downButton().is(':hidden'), "hide - before hover: down button hidden");
 
@@ -48,9 +47,9 @@ test("buttons - auto (hover)", function() {
 	
 	el = $('#spin');
 	el.spinner({ 
-		buttons: 'auto' 
+		showButtons: 'auto' 
 	});
-		
+	
 	ok(upButton().is(':hidden'), "auto - before hover: up button hidden");
 	ok(downButton().is(':hidden'), "auto - before hover: down button hidden");
 
@@ -67,7 +66,7 @@ test("buttons - auto (focus)", function() {
 	
 	el = $('#spin');
 	el.spinner({ 
-		buttons: 'auto' 
+		showButtons: 'auto' 
 	});
 		
 	ok(upButton().is(':hidden'), "auto - before focus: up button hidden");

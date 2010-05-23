@@ -16,7 +16,11 @@
 var hover = 'ui-state-hover',
 	active = 'ui-state-active',
 	namespace = '.spinner',
-	buttonDefault = 'show',
+	alwaysShow = 'always',
+	neverShow = "never",
+	autoShow = "auto",
+	fastShow = "fast", // suits you, sir
+	slowShow = "slow",
 	uiSpinnerClasses = 'ui-spinner ui-widget ui-corner-all ';
 
 $.widget('ui.spinner', {
@@ -49,12 +53,12 @@ $.widget('ui.spinner', {
 		if (o.step === null) { o.step = 1; el.attr("step", "1"); }
 		
 		this.value(this.currVal, true);
-		
 		this._draw();
-		if (this.options.showButtons !== "always") {
-			this.buttons.hide();
-		}
 		this._aria();
+		if (o.showButtons !== alwaysShow) { this.buttons.hide(); }
+		//this._showButtons();
+		// disable spinner if element was already disabled
+		if (o.disabled) { this.disable(); }
 	},
 	_draw: function() {
 		var self = this,
@@ -85,6 +89,12 @@ $.widget('ui.spinner', {
 			.bind('blur'+namespace, function(event) {
 				if (self.source == "keyboard") { self._stop(); }
 				self._readValue();
+				self.focused = false;
+				self._showButtons();
+			})
+			.bind("focus"+namespace, function(event) {
+				self.focused = true;
+				self._showButtons();
 			})
 			.parent()
 				// add buttons
@@ -96,8 +106,11 @@ $.widget('ui.spinner', {
 					"height": outerHeight
 				})				
 				.hover(function() {
-					//self._hide(false);
+					self.hovering = true;
+					self._showButtons();
 				}, function() {
+					self.hovering = false;
+					self._showButtons();
 					if (self.source == "mouse") { self._stop(); }
 				});
 
@@ -117,15 +130,10 @@ $.widget('ui.spinner', {
 				}
 			});
 
-		// disable spinner if element was already disabled
-		if (o.disabled) {
-			this.disable();
-		}
-		
 		// button bindings
 		this.buttons = uiSpinner.find('.ui-spinner-button')
 			.css("width", o.buttonWidth)
-			.bind('mousedown', function (event) {
+			.bind('mousedown'+namespace, function (event) {
 				var direction = $(this).hasClass('ui-spinner-up') ? 1 : -1;
 				self._stop();
 				self.source = "mouse";
@@ -136,7 +144,7 @@ $.widget('ui.spinner', {
 				}
 				return true;
 			})
-			.bind('mouseup', function (event) {
+			.bind('mouseup'+namespace, function (event) {
 				self._stop();
 				self.element.focus();
 				$(this).removeClass(active);
@@ -229,7 +237,7 @@ $.widget('ui.spinner', {
 			o = this.options,
 			self = this;
 
-		if (o.disabled && ! force)  return;
+		if (o.disabled && ! force) { return; }
 			
 		if (! this.timer) {
 			this._start();
@@ -244,7 +252,7 @@ $.widget('ui.spinner', {
 		}
 		inc = o.increments[this.spinStage];
 
-		// 
+		// get next value
 		next = o.next(this.currVal, inc.increment * (paging?o.page:o.step), direction, o.min, o.max);
 		if (next !== false) {
 			this._trigger("spin", this.sourceEvent, {value: this.currValue, next: next});
@@ -296,7 +304,6 @@ $.widget('ui.spinner', {
 		return o.format(this.currVal, o.precision, o.radixPoint);
 	},
 	
-	/// XXX next
 	_mouseWheel: function(event, delta) {
 		var self = this;
 		delta = ($.browser.opera ? -delta / Math.abs(delta) : delta);
@@ -360,7 +367,7 @@ $.widget('ui.spinner', {
 	_setOption: function (name, value) {
 		this.options[name] = value;
 		if (name === "min" || name === "max") { this._aria(); }
-		
+		else if (name === "showButtons") { this._showButtons(); }
 	},
 	
 	stepUp: function (count) {
@@ -385,6 +392,20 @@ $.widget('ui.spinner', {
 			this._spin(direction, paging, true);
 		}
 		this._stop();
+	},
+	
+	// even though i'm philosophically opposed to vanishing UI elements...
+	_showButtons: function () {
+		var opt = this.options.showButtons,
+			speed= (opt === slowShow || opt === fastShow || typeof opt === "number") ? opt:
+					(opt === autoShow) ? fastShow:
+					"";
+		if (opt === neverShow) { this.buttons.hide(); }
+		else if (opt === alwaysShow || speed === "") { this.buttons.show(); }
+		else {
+			if (this.focused || this.hovering) { this.buttons.fadeIn(speed); }
+			else { this.buttons.fadeOut(speed); }
+		}
 	}
 	
 });

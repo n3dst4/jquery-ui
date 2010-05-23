@@ -55,17 +55,14 @@ test("stop", function() {
 
 test("change", function() {
 	expect(1);
-
-	var start = spin = stop = change = 0;
+	var change = 0;
 	
 	el = $("#spin").spinner({
 		change: function(){
 			change++;
 		}
 	});
-
 	simulateKeyDownUp(el, $.ui.keyCode.UP);
-	
 	equals(change, 1, "Change triggered");
 });
 

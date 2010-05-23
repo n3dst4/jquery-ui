@@ -16,17 +16,17 @@
 			return isNaN(i) ? speed : i;
 		}
 	
-		$("#s1, #s2").spinner({buttons: 'auto'});
+		$("#s1, #s2").spinner({showButtons: 'never'});
 		
 		$("#autohide").toggle(function() {
-			$("#s1, #s2").spinner("option", "buttons", 'show');
+			$("#s1, #s2").spinner("option", "showButtons", 'always');
 			$("#speedp").css("display", "none");
 		}, function() {
-			$("#s1, #s2").spinner("option", "buttons", getSpeed());
+			$("#s1, #s2").spinner("option", "showButtons", getSpeed());
 			$("#speedp").css("display", "block");
 		});
 		$("#speed").change(function() {
-			$("#s1, #s2").spinner("option", "buttons", getSpeed());
+			$("#s1, #s2").spinner("option", "showButtons", getSpeed());
 		});
 	});
 	</script>

@@ -29,14 +29,14 @@ module("spinner: core");
 test("init", function() {
 	//expect(3);
 
-	$("<input>").appendTo('body').spinner();//remove();
+	$("<input>").appendTo('body').spinner().remove();
 	ok(true, '.spinner() called on element');
 
-	//$('<input id="spinner_dis">').spinner().remove();
-	//ok(true, '.spinner() called on disconnected element');
-	//
-	//el = $('<input>').spinner();
-	//ok(el.hasClass('ui-spinner-input'), 'input gets ui-spinner-input class on init');
+	$('<input id="spinner_dis">').spinner().remove();
+	ok(true, '.spinner() called on disconnected element');
+	
+	el = $('<input>').spinner();
+	ok(el.hasClass('ui-spinner-input'), 'input gets ui-spinner-input class on init');
 
 });
 
@@ -127,7 +127,7 @@ test("keydown PGUP on input, increases value not greater than max", function() {
 	options = {
 		max:100,
 		value:0,
-		step:1,
+		step:1
 	}
 	el.spinner(options);
 		
