@@ -89,24 +89,25 @@ test("currency - single character currency symbol", function() {
 		currency:"$",
 		max:120,
 		min:-50,
-		step:0.3
+		step:0.3,
+		precision: 2
 	};
 	
 	el.spinner(options);
 
 	equals(el.val(), "$0.00", "start number");
-
+	
 	simulateKeyDownUp(el, $.ui.keyCode.UP);
-
+	
 	equals(el.val(), "$0.30", "stepping 0.30");
-
-	simulateKeyDownUp(el, $.ui.keyCode.END);
-
-	equals(el.val(), "$120.00", "End key to max");
-
+	
 	simulateKeyDownUp(el, $.ui.keyCode.HOME);
-
-	equals(el.val(), "-$50.00", "Home key to min");
+	
+	equals(el.val(), "$120.00", "Home key to max");
+	
+	simulateKeyDownUp(el, $.ui.keyCode.END);
+	
+	equals(el.val(), "-$50.00", "End key to min");
 	
 	for ( var i = 1 ; i<=120 ; i++ ) {
 		simulateKeyDownUp(el, $.ui.keyCode.UP);
@@ -123,7 +124,9 @@ test("currency - combined character currency symbol", function() {
 	options = {
 		currency: 'HK$',
 		step: 1500.50,
-		value: 1000
+		value: 1000,
+		thousandSeparator: ",",
+		precision: 2
 	}
 	
 	el.spinner(options);
@@ -142,10 +145,11 @@ test("currency - space as group separator", function() {
 	
 	options = {
 		currency: '$',
-		groupSeparator: ' ',
+		thousandSeparator: ' ',
 		radixPoint: '.',
 		step: 1500.50,
-		value: 1000
+		value: 1000,
+		precision: 2
 	}
 	
 	el.spinner(options);
@@ -163,10 +167,11 @@ test("currency - apos as group separator", function() {
 	el = $('#spin');
 	options = {
 		currency: 'Fr ',
-		groupSeparator: "'",
+		thousandSeparator: "'",
 		radixPoint: '.',
 		step: 1500.50,
-		value: 1000
+		value: 1000,
+		precision: 2
 	}
 	el.spinner(options);
 
@@ -183,10 +188,11 @@ test("currency - period as group separator and comma as radixPoint", function() 
 	el = $('#spin');
 	options = {
 		currency: 'RUB',
-		groupSeparator: ".",
+		thousandSeparator: ".",
 		radixPoint: ',',
 		step: 1.5,
-		value: 1000
+		value: 1000,
+		precision: 2
 	}
 	el.spinner(options);
 
@@ -224,7 +230,7 @@ test("groupSeparator - comma separator (default)", function() {
 	
 	el = $('#spin');
 	options = {
-		groupSeparator: ',',
+		thousandSeparator: ',',
 		value: 1000000
 	};
 	el.spinner(options);
@@ -236,7 +242,7 @@ test("groupSeparator - space separator", function() {
 	
 	el = $('#spin');
 	options = {
-		groupSeparator: ' ',
+		thousandSeparator: ' ',
 		value: 1000000
 	};
 	el.spinner(options);
@@ -248,51 +254,11 @@ test("groupSeparator - apos separator", function() {
 	
 	el = $('#spin');
 	options = {
-		groupSeparator: "'",
+		thousandSeparator: "'",
 		value: 1000000
 	};
 	el.spinner(options);
 	equals(el.val(), "1'000'000", "value contains apos separated by 3 digits");
-});
-
-test("incremental - false (default)", function() {
-	expect(2);
-	
-	el = $("#spin").spinner({ incremental:false });
-
-	for ( var i = 1 ; i<=120 ; i++ ) {
-		el.simulate("keydown",{keyCode:$.ui.keyCode.UP});
-	}
-	el.simulate("keyup",{keyCode:$.ui.keyCode.UP});
-
-	equals(el.val(), 120, "incremental false - keydown 120 times");
-
-	for ( var i = 1 ; i<=210 ; i++ ) {
-		el.simulate("keydown",{keyCode:$.ui.keyCode.DOWN});
-	}
-	el.simulate("keyup",{keyCode:$.ui.keyCode.DOWN});
-
-	equals(el.val(), -90, "incremental false - keydown 210 times");
-});
-
-test("incremental - true", function() {
-	expect(2);
-	
-	el.spinner('option', 'incremental', true );
-
-	for ( var i = 1 ; i<=120 ; i++ ) {
-		el.simulate("keydown",{keyCode:$.ui.keyCode.UP});
-	}
-	el.simulate("keyup",{keyCode:$.ui.keyCode.UP});
-
-	equals(el.val(), 300, "incremental true - keydown 120 times (100+20*10)");
-
-	for ( var i = 1 ; i<=210 ; i++ ) {
-		el.simulate("keydown",{keyCode:$.ui.keyCode.DOWN});
-	}
-	el.simulate("keyup",{keyCode:$.ui.keyCode.DOWN});
-
-	equals(el.val(), -1800, "incremental true - keydown 210 times (300-100-100*10-10*100)");
 });
 
 test("max", function() {

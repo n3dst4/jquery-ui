@@ -1,9 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<title>XXXjQuery UI Spinner - Default functionality</title>
+	<title>jQuery UI Spinner - Default functionality</title>
 	<link type="text/css" href="../../themes/base/jquery.ui.all.css" rel="stylesheet" />
-	<link type="text/css" href="../../themes/base/ui.all.css" rel="stylesheet" />
 	<script type="text/javascript" src="../../jquery-1.4.2.js"></script>
 	<script type="text/javascript" src="../../external/jquery.mousewheel.js"></script>
 	<script type="text/javascript" src="../../ui/jquery.ui.core.js"></script>
@@ -12,7 +11,14 @@
 	<link type="text/css" href="../demos.css" rel="stylesheet" />
 	<script type="text/javascript">
 	$(function() {
-		$("#s1").spinner({disabled: true});
+		var check = -50;
+		
+		$("#s1").spinner({
+			step: 0.3,
+			precision: 2,
+			value: -50,
+			currency: ""
+		});
 		
 		$("#disable").toggle(function() {
 			$("#s1").spinner("disable");
@@ -36,6 +42,16 @@
 		}, function() {
 			$(this).removeClass("ui-state-hover");
 		});
+		
+		for ( var i = 1 ; i<=120 ; i++ ) {
+			$("#s1").spinner("stepUp");
+			//check += 0.3;
+			//if (check.toFixed(2) != $("#s1").val()) {
+			//	console.log(check.toFixed(2), $("#s1").val());
+			//}
+		}
+
+		
 	});
 	</script>
 </head>

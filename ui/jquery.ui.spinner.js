@@ -30,11 +30,9 @@ $.widget('ui.spinner', {
 			o = this.options,
 			prevVal = this.element.val();
 			
-		o.value = this.currVal = o.parse.call(o,
+		o.value = o.parse.call(o,
 								(o.value !== null) ? o.value :
 								(prevVal !== "") ? prevVal :
-								(o.min !== null) ? o.min :
-								(o.max !== null) ? o.max :
 								0);
 
 		// html5
@@ -52,7 +50,7 @@ $.widget('ui.spinner', {
 		
 		if (o.step === null) { o.step = 1; el.attr("step", "1"); }
 		
-		this.value(this.currVal, true);
+		this.value(o.value, true);
 		this._draw();
 		this._aria();
 		if (o.showButtons !== alwaysShow) { this.buttons.hide(); }
@@ -253,9 +251,9 @@ $.widget('ui.spinner', {
 		inc = o.increments[this.spinStage];
 
 		// get next value
-		next = o.next(this.currVal, inc.increment * (paging?o.page:o.step), direction, o.min, o.max);
+		next = o.next(o.value, inc.increment * (paging?o.page:o.step), direction, o.min, o.max);
 		if (next !== false) {
-			this._trigger("spin", this.sourceEvent, {value: this.currValue, next: next});
+			this._trigger("spin", this.sourceEvent, {value: o.value, next: next});
 			if (this.timer) { clearTimeout(this.timer); }
 			this.timer = setTimeout(function () {self._spin(direction, paging)}, inc.delay);
 			this.value(next);
@@ -265,23 +263,24 @@ $.widget('ui.spinner', {
 	
 	_start: function () {
 		this._readValue();
-		this._trigger("start", this.sourceEvent, {value: this.currVal});
+		this._trigger("start", this.sourceEvent, {value: this.options.value});
 	},
 	
 	_stop: function () {
 		if (this.timer) {
 			clearTimeout (this.timer);
 			this.source = this.timer = this.spinCounter = this.spinStage = null;
-			this._trigger("stop", null, {value: this.currVal});
+			this._trigger("stop", null, {value: this.options.value});
 		}
 	},
 	
 	value: function (newVal, suppressEvent) {
+		var o = this.options;
 		if (arguments.length == 0) {
-			return this.currVal;
+			return o.value;
 		}
 		else {
-			this.currVal = newVal;
+			o.value = newVal;
 			if (! suppressEvent) {
 				this._trigger("change", null,
 					{value: newVal, spinning: !!this.timer});
@@ -301,7 +300,7 @@ $.widget('ui.spinner', {
 	
 	_formatted: function () {
 		var o = this.options;
-		return o.format(this.currVal, o.precision, o.radixPoint);
+		return o.format.call(o, o.value);
 	},
 	
 	_mouseWheel: function(event, delta) {
@@ -314,11 +313,11 @@ $.widget('ui.spinner', {
 	},
 	
 	_aria: function() {
-		var opts = this.options;
+		var o = this.options;
 		this.uiSpinner 
 			&& this.uiSpinner
-				.attr('aria-valuemin', opts.format(opts.min))
-				.attr('aria-valuemax', opts.format(opts.max))
+				.attr('aria-valuemin', o.format.call(o, o.min))
+				.attr('aria-valuemax', o.format.call(o, o.max))
 				.attr('aria-valuenow', this._formatted());
 	},
 	
@@ -425,19 +424,49 @@ $.extend($.ui.spinner.prototype, {
 		showButtons: "always",
 		useMouseWheel: true,
 		buttonWidth: 16,
+		currency: "",
+		units: "",
+		thousandSeparator: "",
 		increments: [{count: 2, increment: 1, delay: 500},
 					 {count: 50, increment: 1, delay: 50},
 					 {count: null, increment: 10, delay: 50}],
-		format: function (value, precision, radixPoint) {
-			if (typeof(value) === "number") {
-				return value.toFixed(precision).replace(".", radixPoint);
+		format: function (value) {
+			var sign, integral, fractional, result, orig = value;
+			if (typeof(value) !== "number") {
+				value = 0;
+			}
+			sign = (value >= 0) ? "" : "-";
+			value = Math.abs(value).toFixed(this.precision);
+			result = /(\d+)(?:\.(\d+))?/.exec(value);
+			integral = result[1];
+			if (this.thousandSeparator) {
+				integral = integral.split("");
+				integral.reverse();
+				integral = integral.join("").replace(/(\d\d\d)/g, "$1" + this.thousandSeparator);
+				integral = integral.split("");
+				integral.reverse();
+				integral = integral.join("");
+			}
+			if (this.precision) {
+				fractional = result[2];
+				value = [integral, this.radixPoint, fractional].join("");
 			}
 			else {
-				return "";
+				value = integral;
 			}
+			return sign + this.currency + value;
 		},
+		
 		parse: function (text) {
-			return parseFloat(text);
+			var result, orig = text,
+				re = /^(-?)[^\d]*(.*?)[^\d]*$/;
+			text = text.toString().replace(" ", "")
+				.replace(this.thousandSeparator, "")
+				.replace(this.radixPoint, ".")
+				.replace(this.currency, "");
+			result = re.exec(text);
+			result =  parseFloat(result[2]) * (result[1]?-1.0:1.0);
+			return result;
 		},
 		next: function (currentValue, amount, direction, min, max) {
 			var n;
