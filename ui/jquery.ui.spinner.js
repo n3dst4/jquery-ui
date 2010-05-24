@@ -29,7 +29,7 @@ $.widget('ui.spinner', {
 			el = this.element,
 			o = this.options,
 			prevVal = this.element.val();
-			
+
 		o.value = o.parse.call(o,
 								(o.value !== null) ? o.value :
 								(prevVal !== "") ? prevVal :
@@ -39,7 +39,7 @@ $.widget('ui.spinner', {
 		$.each(["min", "max", "step"], function (i, name) {
 			attrVal = el.attr(name);
 			if (o[name] === null) {
-				if (typeof attrVal !== "undefined") {
+				if (typeof attrVal !== "undefined" && attrVal !== "") {
 					o[name] = attrVal;
 				}
 			}
