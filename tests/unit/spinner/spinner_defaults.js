@@ -22,7 +22,8 @@ var spinner_defaults = {
 				 {count: null, increment: 10, delay: 50}],
 	format: $.noop,
 	parse: $.noop,
-	next: $.noop
+	next: $.noop,
+	validate: $.noop
 };
 
 commonWidgetTests('spinner', { defaults: spinner_defaults });

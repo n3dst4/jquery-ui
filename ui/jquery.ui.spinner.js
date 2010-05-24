@@ -280,7 +280,7 @@ $.widget('ui.spinner', {
 			return o.value;
 		}
 		else {
-			o.value = newVal;
+			o.value = o.validate.call(o, newVal);
 			if (! suppressEvent) {
 				this._trigger("change", null,
 					{value: newVal, spinning: !!this.timer});
@@ -478,7 +478,12 @@ $.extend($.ui.spinner.prototype, {
 				if (min !== null) { n = Math.max(min, n); }
 				return n;
 			}
-		}		
+		},
+		validate: function (value) {
+			if (this.min !== null) { value = Math.max(value, this.min); }
+			if (this.max !== null) { value = Math.min(value, this.max); }
+			return value;
+		}
 	}
 });
 
