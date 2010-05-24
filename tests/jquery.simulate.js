@@ -36,7 +36,7 @@ $.extend($.simulate.prototype, {
 		return evt;
 	},
 	createEvent: function(type, options) {
-		if (/^mouse(over|out|down|up|move)|(dbl)?click$/.test(type)) {
+		if (/^mouse(over|out|down|up|move|wheel)|(dbl)?click$/.test(type)) {
 			return this.mouseEvent(type, options);
 		} else if (/^key(up|down|press)$/.test(type)) {
 			return this.keyboardEvent(type, options);
@@ -52,14 +52,20 @@ $.extend($.simulate.prototype, {
 		}, options);
 
 		var relatedTarget = $(e.relatedTarget)[0];
-
 		if ($.isFunction(document.createEvent)) {
 			evt = document.createEvent("MouseEvents");
 			evt.initMouseEvent(type, e.bubbles, e.cancelable, e.view, e.detail,
 				e.screenX, e.screenY, e.clientX, e.clientY,
 				e.ctrlKey, e.altKey, e.shiftKey, e.metaKey,
 				e.button, e.relatedTarget || document.body.parentNode);
+			if (typeof e.delta !== "undefined") {
+				evt.wheelDelta = e.delta * 120;
+			}
 		} else if (document.createEventObject) {
+			if (typeof e.delta !== "undefined") {
+				e.detail = e.delta * -3;
+				e.delta = undefined;
+			}			
 			evt = document.createEventObject();
 			$.extend(evt, e);
 			evt.button = { 0:1, 1:4, 2:2 }[evt.button] || evt.button;

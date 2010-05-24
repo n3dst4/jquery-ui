@@ -11,7 +11,7 @@
 
 (function($) {
 
-var types = ['DOMMouseScroll', 'qmousewheel'];
+var types = ['DOMMouseScroll', 'mousewheel'];
 
 $.event.special.mousewheel = {
 	setup: function() {
@@ -44,11 +44,8 @@ $.fn.extend({
 
 function handler(event) {
 	var args = [].slice.call( arguments, 1 ), delta = 0, returnValue = true;
-	console.log("mouse");
-	alert("balls");
 	event = $.event.fix(event || window.event);
 	event.type = "mousewheel";
-	
 	if ( event.wheelDelta ) delta = event.wheelDelta/120;
 	if ( event.detail     ) delta = -event.detail/3;
 	

@@ -288,7 +288,11 @@ test("min", function() {
 });
 
 test("mouseWheel", function() {
-	ok(false, 'missing test - untested code is broken code');
+	expect(1);
+	el = $("#spin").spinner({ useMouseWheel: false });
+	el.simulate("mousewheel", {delta: 1});
+	equals(el.val(), 0, "Mouse wheel has no effect when disabled");
+	
 });
 
 test("padding", function() {

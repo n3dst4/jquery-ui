@@ -341,17 +341,15 @@ test("mouse click on buttons", function() {
 });
 
 test("mouse wheel on input", function() {
-	// TODO: not really testing event here, just handling - need to find a way
-	// to simulate a mousewheel event
 	expect(2);
 	
 	var el = $("#spin").spinner({initValue: 0});
 
-	el.data("spinner")._mouseWheel({preventDefault:function(){}}, 120);
+	el.simulate("mousewheel", {delta: 1});
 	equals(el.val(), 1);
 	
 	for (var i=0; i < 10; i++) {
-		el.data("spinner")._mouseWheel({preventDefault:function(){}}, 120);
+		el.simulate("mousewheel", {delta: 1});
 	}
 	equals(el.val(), 11);
 });
