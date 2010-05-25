@@ -65,9 +65,10 @@ $.widget('ui.spinner', {
 			outerWidth = el.outerWidth(),
 			inputWidth = el.width() - o.buttonWidth,
 			marginLeft = el.css("margin-left"),
-			marginRight = el.css("margin-right")
+			marginRight = el.css("margin-right"),
 			outerHeight = el.outerHeight();
 
+		//debugger;
 		
 		var uiSpinner = el
 			.addClass('ui-spinner-input')
@@ -305,7 +306,7 @@ $.widget('ui.spinner', {
 	
 	_mouseWheel: function(event, delta) {
 		var self = this;
-		delta = ($.browser.opera ? -delta / Math.abs(delta) : delta);
+		//delta = ($.browser.opera ? -delta / Math.abs(delta) : delta);
 		
 		self._spin((delta > 0 ? 1 : -1), event.shiftKey);
 		self._stop();

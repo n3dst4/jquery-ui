@@ -52,21 +52,25 @@ $.extend($.simulate.prototype, {
 		}, options);
 
 		var relatedTarget = $(e.relatedTarget)[0];
+		e.detail = (typeof options.detail !== "undefined")? options.detail :
+			(typeof options.delta !== "undefined")? options.delta * -3 : undefined;
+						
+		// IE and Opera will cry if we try to attach a wheelDelta property to
+		// the event, even though that's what they would would generate
+		// natively. Luckily the detail property is more than adequate if we're
+		// going through jquery.mousewheel because it'll get normalised anyway.
+		//e.wheelDelta = (typeof e.wheelDelta !== "undefined")? e.wheelDelta :
+		//				(typeof e.delta !== "undefined")? e.delta * 120 : undefined;
+		
 		if ($.isFunction(document.createEvent)) {
 			evt = document.createEvent("MouseEvents");
 			evt.initMouseEvent(type, e.bubbles, e.cancelable, e.view, e.detail,
 				e.screenX, e.screenY, e.clientX, e.clientY,
 				e.ctrlKey, e.altKey, e.shiftKey, e.metaKey,
 				e.button, e.relatedTarget || document.body.parentNode);
-			if (typeof e.delta !== "undefined") {
-				evt.wheelDelta = e.delta * 120;
-			}
 		} else if (document.createEventObject) {
-			if (typeof e.delta !== "undefined") {
-				e.detail = e.delta * -3;
-				e.delta = undefined;
-			}			
 			evt = document.createEventObject();
+			delete e.wheelDelta;
 			$.extend(evt, e);
 			evt.button = { 0:1, 1:4, 2:2 }[evt.button] || evt.button;
 		}

@@ -14,9 +14,9 @@
 		var check = -50;
 		
 		$("#s1").spinner({
-			step: 0.3,
-			precision: 2,
-			value: -50,
+			step: 1,
+			precision: 0,
+			value: 0,
 			currency: ""
 		});
 		
@@ -42,15 +42,6 @@
 		}, function() {
 			$(this).removeClass("ui-state-hover");
 		});
-		
-		for ( var i = 1 ; i<=120 ; i++ ) {
-			$("#s1").spinner("stepUp");
-			//check += 0.3;
-			//if (check.toFixed(2) != $("#s1").val()) {
-			//	console.log(check.toFixed(2), $("#s1").val());
-			//}
-		}
-
 		
 	});
 	</script>
