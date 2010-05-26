@@ -61,24 +61,34 @@ $.widget('ui.spinner', {
 	_draw: function() {
 		var self = this,
 			o = self.options,
-			el = self.element,
-			outerWidth = el.outerWidth(),
-			inputWidth = el.width() - o.buttonWidth,
-			marginLeft = el.css("margin-left"),
-			marginRight = el.css("margin-right"),
-			outerHeight = el.outerHeight();
+			el = self.element;
+			//inputWidth = el.width() - o.buttonWidth;
+			
+		this.elementCSS = {
+			"margin-left": el.css("margin-left"),
+			"margin-right": el.css("margin-right"),
+			"margin-top": el.css("margin-top"),
+			"margin-bottom": el.css("margin-bottom"),
+			"width": el.width()
+		};
 
-		//debugger;
+		this.wrapperCSS = {
+			"margin-left": el.css("margin-left"),
+			"margin-right": el.css("margin-right"),
+			"margin-top": el.css("margin-top"),
+			"margin-bottom": el.css("margin-bottom"),
+			"height": el.outerHeight(),
+			"width": o.width || el.outerWidth()
+		};
 		
 		var uiSpinner = el
 			.addClass('ui-spinner-input')
 			.attr('autocomplete', 'off') // switch off autocomplete in opera
-			.wrap(self._uiSpinnerHtml())
 			.css({
-				"margin-left": "0px",
-				"margin-right": "0px",
-				"width": inputWidth
+				"margin": "0px",
+				"width": this.wrapperCSS.width - o.buttonWidth - (this.element.outerWidth() - this.elementCSS.width)
 			})
+			.wrap(self._uiSpinnerHtml())
 			.bind('keydown'+namespace, function(event) {
 				return self._keyDown(event);
 			})
@@ -98,12 +108,7 @@ $.widget('ui.spinner', {
 			.parent()
 				// add buttons
 				.append(self._buttonHtml())
-				.width(outerWidth)
-				.css({
-					"margin-left": marginLeft,
-					"margin-right": marginRight,
-					"height": outerHeight
-				})				
+				.css(this.wrapperCSS)				
 				.hover(function() {
 					self.hovering = true;
 					self._showButtons();
@@ -112,6 +117,7 @@ $.widget('ui.spinner', {
 					self._showButtons();
 					if (self.source == "mouse") { self._stop(); }
 				});
+				
 
 		// TODO: need a better way to exclude IE8 without resorting to $.browser.version
 		// fix inline-block issues for IE. Since IE8 supports inline-block we need to exclude it.
@@ -131,7 +137,7 @@ $.widget('ui.spinner', {
 
 		// button bindings
 		this.buttons = uiSpinner.find('.ui-spinner-button')
-			.css("width", o.buttonWidth)
+			.css("width", o.buttonWidth -1)
 			.bind('mousedown'+namespace, function (event) {
 				var direction = $(this).hasClass('ui-spinner-up') ? 1 : -1;
 				self._stop();
@@ -332,6 +338,7 @@ $.widget('ui.spinner', {
 			.removeAttr('disabled')
 			.removeAttr('autocomplete')
 			.removeData('spinner')
+			.css(this.elementCSS)
 			.unbind(namespace);
 		
 		if (this.uiSpinner) {
@@ -427,6 +434,7 @@ $.extend($.ui.spinner.prototype, {
 		buttonWidth: 16,
 		currency: "",
 		units: "",
+		width: null,
 		thousandSeparator: "",
 		increments: [{count: 2, increment: 1, delay: 500},
 					 {count: 50, increment: 1, delay: 50},
@@ -467,7 +475,7 @@ $.extend($.ui.spinner.prototype, {
 				.replace(this.currency, "");
 			result = re.exec(text);
 			result =  parseFloat(result[2]) * (result[1]?-1.0:1.0);
-			return result;
+			return result || 0;
 		},
 		next: function (currentValue, amount, direction, min, max) {
 			var n;

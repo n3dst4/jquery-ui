@@ -13,12 +13,7 @@
 	$(function() {
 		var check = -50;
 		
-		$("#s1").spinner({
-			step: 1,
-			precision: 0,
-			value: 0,
-			currency: ""
-		});
+		$("#s1").spinner();
 		
 		$("#disable").toggle(function() {
 			$("#s1").spinner("disable");
