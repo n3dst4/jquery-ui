@@ -21,7 +21,6 @@ var hover = 'ui-state-hover',
 	autoShow = "auto",
 	fastShow = "fast", // suits you, sir
 	slowShow = "slow",
-	inline = null,
 	uiSpinnerClasses = 'ui-spinner ui-widget ui-corner-all ';
 	
 
@@ -32,10 +31,6 @@ $.widget('ui.spinner', {
 			o = this.options,
 			prevVal = this.element.val();
 			
-		inline = (inline !== null)? inline :
-			$("<div>").css("display", "inline-block").css("display")
-			=== "inline-block";
-
 		o.value = o.parse.call(o, (o.value !== null) ? o.value :
 									(prevVal !== "") ? prevVal :
 									0);
@@ -111,8 +106,8 @@ $.widget('ui.spinner', {
 			.addClass('ui-spinner-input')
 			.attr('autocomplete', 'off') // switch off autocomplete in opera
 			.css({
-				"margin": "0px",
-				"width": this.wrapperCSS.width - o.buttonWidth - (this.element.outerWidth() - this.elementCSS.width)
+				"margin": 0,
+				"width": this.elementCSS.width
 			})
 			.wrap(self._uiSpinnerHtml())
 			.bind('keydown'+namespace, function(event) {
@@ -132,10 +127,8 @@ $.widget('ui.spinner', {
 				self._showButtons();
 			})
 			.parent()
-				.css(this.wrapperCSS)
-				//.last()
-				// add buttons
 				.append(self._buttonHtml())
+				.css(this.wrapperCSS)
 				.hover(function() {
 					self.hovering = true;
 					self._showButtons();
@@ -144,9 +137,9 @@ $.widget('ui.spinner', {
 					self._showButtons();
 					if (self.source == "mouse") { self._stop(); }
 				});
-		
-		if (! inline) uiSpinner = uiSpinner.parent();
-				
+			
+		// size input now
+		el.css("width", uiSpinner.width() - o.buttonWidth - (el.outerWidth() - this.elementCSS.width));
 
 		// TODO: need a better way to exclude IE8 without resorting to $.browser.version
 		// fix inline-block issues for IE. Since IE8 supports inline-block we need to exclude it.
@@ -212,10 +205,8 @@ $.widget('ui.spinner', {
 	
 	_uiSpinnerHtml: function () {
 		return ['<span role="spinbutton" class="', uiSpinnerClasses,
-				(this.options.spinnerClass || ''),
-				' ui-spinner-', this.options.dir, '">',
-				inline?'':'<div class="ui-spinner-innertube"></div>',
-				'</span>'].join("");
+				(this.options.spinnerClass || ''), ' ui-spinner-',
+				this.options.dir, '">','</span>'].join("");
 	},
 	
 	_buttonHtml: function () {
