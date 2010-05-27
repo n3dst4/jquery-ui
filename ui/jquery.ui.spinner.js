@@ -21,7 +21,9 @@ var hover = 'ui-state-hover',
 	autoShow = "auto",
 	fastShow = "fast", // suits you, sir
 	slowShow = "slow",
+	inline = null,
 	uiSpinnerClasses = 'ui-spinner ui-widget ui-corner-all ';
+	
 
 $.widget('ui.spinner', {
 	_create: function() {
@@ -29,11 +31,14 @@ $.widget('ui.spinner', {
 			el = this.element,
 			o = this.options,
 			prevVal = this.element.val();
+			
+		inline = (inline !== null)? inline :
+			$("<div>").css("display", "inline-block").css("display")
+			=== "inline-block";
 
-		o.value = o.parse.call(o,
-								(o.value !== null) ? o.value :
-								(prevVal !== "") ? prevVal :
-								0);
+		o.value = o.parse.call(o, (o.value !== null) ? o.value :
+									(prevVal !== "") ? prevVal :
+									0);
 
 		// html5
 		$.each(["min", "max", "step"], function (i, name) {
@@ -54,10 +59,31 @@ $.widget('ui.spinner', {
 		this._draw();
 		this._aria();
 		if (o.showButtons !== alwaysShow) { this.buttons.hide(); }
-		//this._showButtons();
-		// disable spinner if element was already disabled
 		if (o.disabled) { this.disable(); }
 	},
+	
+	destroy: function() {
+		if ($.fn.mousewheel) { this.element.unmousewheel(); }
+		
+		this.element
+			.removeClass('ui-spinner-input')
+			.removeAttr('disabled')
+			.removeAttr('autocomplete')
+			.removeData('spinner')
+			.css(this.elementCSS)
+			.unbind(namespace)
+			;
+		
+		if (this.uiSpinner) {
+			if (this.uiSpinner.parent()[0] != null) {
+				this.uiSpinner.replaceWith(this.element);	
+			}
+			else {
+				return this.element.clone(true);
+			}
+		}
+	},
+	
 	_draw: function() {
 		var self = this,
 			o = self.options,
@@ -106,9 +132,10 @@ $.widget('ui.spinner', {
 				self._showButtons();
 			})
 			.parent()
+				.css(this.wrapperCSS)
+				//.last()
 				// add buttons
 				.append(self._buttonHtml())
-				.css(this.wrapperCSS)				
 				.hover(function() {
 					self.hovering = true;
 					self._showButtons();
@@ -117,6 +144,8 @@ $.widget('ui.spinner', {
 					self._showButtons();
 					if (self.source == "mouse") { self._stop(); }
 				});
+		
+		if (! inline) uiSpinner = uiSpinner.parent();
 				
 
 		// TODO: need a better way to exclude IE8 without resorting to $.browser.version
@@ -182,10 +211,11 @@ $.widget('ui.spinner', {
 	},
 	
 	_uiSpinnerHtml: function () {
-		return '<span role="spinbutton" class="' + uiSpinnerClasses + 
-				(this.options.spinnerClass || '') + 
-				' ui-spinner-' + this.options.dir + 
-				'"></span>';
+		return ['<span role="spinbutton" class="', uiSpinnerClasses,
+				(this.options.spinnerClass || ''),
+				' ui-spinner-', this.options.dir, '">',
+				inline?'':'<div class="ui-spinner-innertube"></div>',
+				'</span>'].join("");
 	},
 	
 	_buttonHtml: function () {
@@ -326,29 +356,6 @@ $.widget('ui.spinner', {
 				.attr('aria-valuemin', o.format.call(o, o.min))
 				.attr('aria-valuemax', o.format.call(o, o.max))
 				.attr('aria-valuenow', this._formatted());
-	},
-	
-	destroy: function() {
-		if ($.fn.mousewheel) {
-			this.element.unmousewheel();
-		}
-		
-		this.element
-			.removeClass('ui-spinner-input')
-			.removeAttr('disabled')
-			.removeAttr('autocomplete')
-			.removeData('spinner')
-			.css(this.elementCSS)
-			.unbind(namespace);
-		
-		if (this.uiSpinner) {
-			if (this.uiSpinner.parent()[0] != null) {
-				this.uiSpinner.replaceWith(this.element);	
-			}
-			else {
-				return this.element.clone(true);
-			}
-		}
 	},
 	
 	enable: function() {

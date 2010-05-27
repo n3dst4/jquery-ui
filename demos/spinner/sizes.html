@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>jQuery UI Spinner - Sizing</title>
+	<link type="text/css" href="../../themes/base/jquery.ui.all.css" rel="stylesheet" />
+	<script type="text/javascript" src="../../jquery-1.4.2.js"></script>
+	<script type="text/javascript" src="../../external/jquery.mousewheel.js"></script>
+	<script type="text/javascript" src="../../ui/jquery.ui.core.js"></script>
+	<script type="text/javascript" src="../../ui/jquery.ui.widget.js"></script>
+	<script type="text/javascript" src="../../ui/jquery.ui.spinner.js"></script>
+	<link type="text/css" href="../demos.css" rel="stylesheet" />
+	<style type="text/css">
+	#by-css {width: 288px; padding: 5px; margin: 0px; border: 1px solid #bbb; }
+	#by-option {width: 150px; padding: 5px; margin: 0px; border: 1px solid #bbb; }
+	#complex {width: 300px; height: 20px; padding: 10px; margin: 10px; border: 1px solid #bbb;}
+	</style>
+	<script type="text/javascript">
+	$ = jQuery;
+	$(function() {
+		var check = -50;
+		
+		function create () {
+			$("#by-css").spinner();
+			$("#complex").spinner();
+			$("#by-option").spinner({width: 300});
+		}
+		
+		/*
+		$("#disable").toggle(function() {
+			$("#s1").spinner("disable");
+		}, function() {
+			$("#s1").spinner("enable");
+		});
+		*/
+		
+		$("#destroy2").toggle(function() {
+			create();
+		}, function() {
+			$("#by-css, #by-option, #complex").each(function(){
+				$(this).spinner("destroy");
+			});
+		});
+		
+		
+		$(".ui-button").hover(function() {
+			$(this).addClass("ui-state-hover");
+		}, function() {
+			$(this).removeClass("ui-state-hover");
+		});
+		
+	});
+	</script>
+</head>
+<body>
+
+<div class="demo">
+
+<p>
+	<label for="by-css">Sized by CSS:</label><br/>
+	<input id="by-css"></input>
+</p>
+
+<p></p>
+<p>
+	<label for="by-option">Sized by Option:</label><br/>
+	<input id="by-option"></input>
+</p>
+
+<p></p>
+<p>
+	<label for="complex">Complex margins & padding:</label><br/>
+	<input id="complex"></input>
+</p>
+
+<p>
+<button id="disable" class="ui-button ui-state-default ui-corner-all">Toggle disable/enable</button>
+<button id="destroy2" class="ui-button ui-state-default ui-corner-all">Toggle widget</button>
+</p>
+
+</div><!-- End demo -->
+
+<div class="demo-description">
+<p>
+Preservation of sizing.
+</p>
+</div><!-- End demo-description -->
+
+</body>
+</html>
