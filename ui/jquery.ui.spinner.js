@@ -63,7 +63,8 @@ $.widget('ui.spinner', {
 		
 		this.value(value, true);
 		this._draw();
-		this._aria();
+		this._ariaValue();
+		this._ariaMinMax();
 		if (o.showButtons !== alwaysShow) { this.buttons.hide(); }
 		if (o.disabled) { this.disable(); }
 	},
@@ -317,18 +318,19 @@ $.widget('ui.spinner', {
 	},
 	
 	value: function (newVal, suppressEvent) {
-		var o = this.options;
+		var o = this.options,
+			old = o.value;
 		if (arguments.length == 0) {
 			return o.value;
 		}
 		else {
 			o.value = o.validate.call(o, o.parse(newVal));
+			this.element.val(this._formatted());
+			this._ariaValue();
 			if (! suppressEvent) {
 				this._trigger("change", null,
-					{value: newVal, spinning: !!this.timer});
+					{value: newVal, old: old,  spinning: !!this.timer});
 			}
-			this.element.val(this._formatted());
-			this._aria();
 		}
 	},
 	
@@ -354,13 +356,22 @@ $.widget('ui.spinner', {
 		event.preventDefault();			
 	},
 	
-	_aria: function() {
+	_ariaValue: function() {
+		var o = this.options;
+		if (this.uiSpinner) {
+			if (typeof o.value === "number") {
+				this.uiSpinner.attr('aria-valuenow', o.value);
+			}
+			this.uiSpinner.attr('aria-valuetext', this._formatted());
+		}
+	},
+	
+	_ariaMinMax: function () {
 		var o = this.options;
 		this.uiSpinner 
 			&& this.uiSpinner
-				.attr('aria-valuemin', o.format.call(o, o.min))
-				.attr('aria-valuemax', o.format.call(o, o.max))
-				.attr('aria-valuenow', this._formatted());
+				.attr('aria-valuemin', (o.min === null)?"":o.format.call(o, o.min))
+				.attr('aria-valuemax', (o.max === null)?"":o.format.call(o, o.max));		
 	},
 	
 	enable: function() {
@@ -387,9 +398,9 @@ $.widget('ui.spinner', {
 		var o = this.options,
 			prev = o[name];
 		o[name] = value;
-		if (name === "min" || name === "max") { this._aria(); }
+		if (name === "min" || name === "max") { this._ariaMinMax(); }
 		else if (name === "showButtons") { this._showButtons(); }
-		else if (/(padding|precision|value)/.test(name)) { this.value(o.value); }
+		else if (/(padding|precision|value|currency)/.test(name)) { this.value(o.value); }
 		else if (name === "width") { this.resize(); }
 		else if (name === "spinnerClass") {
 			this.uiSpinner.removeClass(prev || "").addClass(value);

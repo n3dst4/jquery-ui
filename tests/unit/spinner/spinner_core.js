@@ -366,7 +366,7 @@ test("reading HTML5 attributes", function() {
 });
 
 test("ARIA attributes", function() {
-	expect(7);
+	expect(9);
 	
 	el = $('#spin').spinner({ min: -5, max: 5, value: 2 });
 	
@@ -374,10 +374,12 @@ test("ARIA attributes", function() {
 	equals(wrapper().attr('aria-valuemin'), -5, 'aria-valuemin');
 	equals(wrapper().attr('aria-valuemax'), 5, 'aria-valuemax');
 	equals(wrapper().attr('aria-valuenow'), 2, 'aria-valuenow');
+	equals(wrapper().attr('aria-valuetext'), 2, 'aria-valuetext');
 	
 	el.spinner('value', 3);
 	
 	equals(wrapper().attr('aria-valuenow'), 3, 'setting value changes aria-valuenow');
+	equals(wrapper().attr('aria-valuetext'), 3, 'setting value changes aria-valuetext');
 	
 	el.spinner('option', { min: -10, max: 10 });
 	
