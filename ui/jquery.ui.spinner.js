@@ -29,9 +29,8 @@ $.widget('ui.spinner', {
 		var attrVal,
 			el = this.element,
 			o = this.options,
-			prevVal = this.element.val();
-			
-		o.value = o.parse.call(o, (o.value !== null) ? o.value :
+			prevVal = this.element.val(),
+			value =  o.parse.call(o, (o.value !== null) ? o.value :
 									(prevVal !== "") ? prevVal :
 									0);
 
@@ -43,14 +42,24 @@ $.widget('ui.spinner', {
 					o[name] = attrVal;
 				}
 			}
-			else {
-				el.attr(name, o[name]);
-			}
+			else { el.attr(name, o[name]); }
 		});
+		
+		if (o.precision === null) {
+			if (o.value !== null && typeof value === "number" && value % 1) {
+				o.precision = /\.(\d+)/.exec(value.toString())[1].length;
+			}
+			else if (o.step !== null && typeof o.step === "number" && o.step % 1) {
+				o.precision = /\.(\d+)/.exec(o.step.toString())[1].length;
+			}
+			else {
+				o.precision = 0;
+			}
+		}		
 		
 		if (o.step === null) { o.step = 1; el.attr("step", "1"); }
 		
-		this.value(o.value, true);
+		this.value(value, true);
 		this._draw();
 		this._aria();
 		if (o.showButtons !== alwaysShow) { this.buttons.hide(); }
@@ -203,6 +212,10 @@ $.widget('ui.spinner', {
 		self.uiSpinner = uiSpinner;
 	},
 	
+	_resize: function () {
+		//this.uiSpinner.width()
+	},
+	
 	_uiSpinnerHtml: function () {
 		return ['<span role="spinbutton" class="', uiSpinnerClasses,
 				(this.options.spinnerClass || ''), ' ui-spinner-',
@@ -308,7 +321,7 @@ $.widget('ui.spinner', {
 			return o.value;
 		}
 		else {
-			o.value = o.validate.call(o, newVal);
+			o.value = o.validate.call(o, o.parse(newVal));
 			if (! suppressEvent) {
 				this._trigger("change", null,
 					{value: newVal, spinning: !!this.timer});
@@ -319,8 +332,8 @@ $.widget('ui.spinner', {
 	},
 	
 	_readValue: function () {
-		var newVal = this.options.parse(this.element.val());
-		if (newVal != this._formatted()) {
+		var newVal = this.options.parse(this.element.val()); 
+		if (newVal != this.options.value) {
 			this.value(newVal);
 		}
 	},
@@ -370,9 +383,15 @@ $.widget('ui.spinner', {
 	},
 	
 	_setOption: function (name, value) {
-		this.options[name] = value;
+		var o = this.options,
+			prev = o[name];
+		o[name] = value;
 		if (name === "min" || name === "max") { this._aria(); }
 		else if (name === "showButtons") { this._showButtons(); }
+		else if (/(padding|precision|value)/.test(name)) { this.value(o.value); }
+		else if (name === "spinnerClass") {
+			this.uiSpinner.removeClass(prev || "").addClass(value);
+		}
 	},
 	
 	stepUp: function (count) {
@@ -420,7 +439,7 @@ $.extend($.ui.spinner.prototype, {
 	eventPrefix: "spin",
 	options: {
 		value: null,
-		precision: 0,
+		precision: null,
 		radixPoint: ".",
 		min: null,
 		max: null,
@@ -433,12 +452,13 @@ $.extend($.ui.spinner.prototype, {
 		currency: "",
 		units: "",
 		width: null,
+		padding: null,
 		thousandSeparator: "",
 		increments: [{count: 2, increment: 1, delay: 500},
 					 {count: 50, increment: 1, delay: 50},
 					 {count: null, increment: 10, delay: 50}],
 		format: function (value) {
-			var sign, integral, fractional, result, orig = value;
+			var sign, integral, fractional, result, pad, zeroes, orig = value;
 			if (typeof(value) !== "number") {
 				value = 0;
 			}
@@ -461,12 +481,19 @@ $.extend($.ui.spinner.prototype, {
 			else {
 				value = integral;
 			}
+			if (this.padding) {
+				zeroes = [];
+				pad = this.padding - value.length;
+				while (pad --> 0) zeroes.push("0");
+				value = zeroes.join("") + value;
+			}
 			return sign + this.currency + value;
 		},
 		
 		parse: function (text) {
 			var result, orig = text,
 				re = /^(-?)[^\d]*(.*?)[^\d]*$/;
+			if (typeof(text) === "number") { return text; }
 			text = text.toString().replace(" ", "")
 				.replace(this.thousandSeparator, "")
 				.replace(this.radixPoint, ".")

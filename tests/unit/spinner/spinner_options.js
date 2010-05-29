@@ -197,7 +197,6 @@ test("currency - period as group separator and comma as radixPoint", function() 
 	el.spinner(options);
 
 	equals(el.val(), "RUB1.000,00", "Russian Ruble");
-
 	simulateKeyDownUp(el, $.ui.keyCode.UP);
 	
 	equals(el.val(), "RUB1.001,50", "Russian Ruble step-up once");
@@ -312,7 +311,7 @@ test("padding", function() {
 test("page", function() {
 	expect(3);
 
-	el = $("#spin").spinner({ step: 2, page:2.5 });
+	el = $("#spin").spinner({ step: 2, page:5 });
 
 	equals(el.val(), "0", "start number");
 
@@ -343,6 +342,7 @@ test("precision", function() {
 	equals(el.val(), '1.234568', "6 decimal places");	
 });
 
+/*
 test("radix", function() {
 	expect(2);
 	
@@ -357,6 +357,7 @@ test("radix", function() {
 	
 	equals(el.val(), 'b', 'key UP on spinner')
 });
+*/
 
 test("radixPoint", function() {
 	el = $("#spin").spinner({
@@ -373,7 +374,7 @@ test("radixPoint", function() {
 	
 	el.spinner('pageDown', 10);
 	
-	equals(el.val(), '-29,00', 'page down into negative space');
+	equals(el.val(), '-79,00', 'page down into negative space');
 });
 
 test("spinnerClass", function() {

@@ -4,7 +4,7 @@
 
 var spinner_defaults = {
 	value: null,
-	precision: 0,
+	precision: null,
 	radixPoint: ".",
 	min: null,
 	max: null,
@@ -16,6 +16,8 @@ var spinner_defaults = {
 	buttonWidth: 16,
 	currency: "",
 	units: "",
+	width: null,
+	padding: null,
 	thousandSeparator: "",
 	increments: [{count: 2, increment: 1, delay: 500},
 				 {count: 50, increment: 1, delay: 50},
