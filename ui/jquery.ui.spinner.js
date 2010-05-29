@@ -34,7 +34,7 @@ $.widget('ui.spinner', {
 									(prevVal !== "") ? prevVal :
 									0);
 
-		// html5
+		// html5 attributes
 		$.each(["min", "max", "step"], function (i, name) {
 			attrVal = el.attr(name);
 			if (o[name] === null) {
@@ -45,6 +45,7 @@ $.widget('ui.spinner', {
 			else { el.attr(name, o[name]); }
 		});
 		
+		// TODO: rephrase this
 		if (o.precision === null) {
 			if (o.value !== null && typeof value === "number" && value % 1) {
 				o.precision = /\.(\d+)/.exec(value.toString())[1].length;
@@ -58,6 +59,7 @@ $.widget('ui.spinner', {
 		}		
 		
 		if (o.step === null) { o.step = 1; el.attr("step", "1"); }
+		if (o.width === null) { o.width = this.element.outerWidth(); }
 		
 		this.value(value, true);
 		this._draw();
@@ -99,24 +101,21 @@ $.widget('ui.spinner', {
 			"margin-right": el.css("margin-right"),
 			"margin-top": el.css("margin-top"),
 			"margin-bottom": el.css("margin-bottom"),
-			"width": el.width()
+			"width": el.css("width")
 		};
 
 		this.wrapperCSS = {
 			"margin-left": el.css("margin-left"),
 			"margin-right": el.css("margin-right"),
 			"margin-top": el.css("margin-top"),
-			"margin-bottom": el.css("margin-bottom"),
-			"height": el.outerHeight(),
-			"width": o.width || el.outerWidth()
+			"margin-bottom": el.css("margin-bottom")
 		};
 		
-		var uiSpinner = el
+		var uiSpinner = this.uiSpinner = el
 			.addClass('ui-spinner-input')
 			.attr('autocomplete', 'off') // switch off autocomplete in opera
 			.css({
-				"margin": 0,
-				"width": this.elementCSS.width
+				"margin": 0
 			})
 			.wrap(self._uiSpinnerHtml())
 			.bind('keydown'+namespace, function(event) {
@@ -147,8 +146,7 @@ $.widget('ui.spinner', {
 					if (self.source == "mouse") { self._stop(); }
 				});
 			
-		// size input now
-		el.css("width", uiSpinner.width() - o.buttonWidth - (el.outerWidth() - this.elementCSS.width));
+		this.resize();
 
 		// TODO: need a better way to exclude IE8 without resorting to $.browser.version
 		// fix inline-block issues for IE. Since IE8 supports inline-block we need to exclude it.
@@ -193,14 +191,12 @@ $.widget('ui.spinner', {
 				$(this).removeClass(active + ' ' + hover);
 			});
 			
-			
 		// mousewheel bindings
 		if ($.fn.mousewheel && self.options.useMouseWheel) {
 			this.element.mousewheel(function(event, delta) {
 				self._mouseWheel(event, delta);
 			});
 		}
-			
 			
 		// ie doesn't fire mousedown on 2nd click, so have to fake it
 		if ($.browser.msie) {
@@ -209,11 +205,16 @@ $.widget('ui.spinner', {
 					.trigger("mouseup");
 			});
 		}
-		self.uiSpinner = uiSpinner;
 	},
 	
-	_resize: function () {
-		//this.uiSpinner.width()
+	resize: function () {
+		var o = this.options,
+			el = this.element;
+		this.uiSpinner.css({
+			"height": el.outerHeight(),
+			"width": o.width	
+		});
+		el.css("width", this.uiSpinner.width() - o.buttonWidth - (el.outerWidth() - el.width()));
 	},
 	
 	_uiSpinnerHtml: function () {
@@ -389,6 +390,7 @@ $.widget('ui.spinner', {
 		if (name === "min" || name === "max") { this._aria(); }
 		else if (name === "showButtons") { this._showButtons(); }
 		else if (/(padding|precision|value)/.test(name)) { this.value(o.value); }
+		else if (name === "width") { this.resize(); }
 		else if (name === "spinnerClass") {
 			this.uiSpinner.removeClass(prev || "").addClass(value);
 		}

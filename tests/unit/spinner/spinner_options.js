@@ -443,7 +443,7 @@ test("width", function() {
 	equals(el.parent().width(), 1000, "spinner width initialized");
 
 	el.spinner('option', 'width', 500);
-	equals(el.width(), 500, "spinner width changed");
+	equals(el.parent().width(), 500, "spinner width changed");
 
 });
 
