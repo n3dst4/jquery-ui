@@ -422,8 +422,6 @@ test("step", function() {
 		simulateKeyDownUp(el, $.ui.keyCode.UP);
 	}
 	equals(el.val(), "20.5", "UP 5 times with step: 2");
-
-
 });
 
 test("value", function() {
@@ -442,7 +440,7 @@ test("width", function() {
 	expect(2);
 	
 	el = $('#spin').spinner({ width: 1000 });
-	equals(el.width(), 1000, "spinner width initialized");
+	equals(el.parent().width(), 1000, "spinner width initialized");
 
 	el.spinner('option', 'width', 500);
 	equals(el.width(), 500, "spinner width changed");
