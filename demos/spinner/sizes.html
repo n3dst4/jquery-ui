@@ -25,13 +25,18 @@
 			$("#by-option").spinner({width: 300});
 		}
 		
-		/*
+		
 		$("#disable").toggle(function() {
-			$("#s1").spinner("disable");
+			$("#by-css, #by-option, #complex").each(function(){
+				$(this).spinner("disable");
+			});
 		}, function() {
-			$("#s1").spinner("enable");
+			$("#by-css, #by-option, #complex").each(function(){
+				$(this).spinner("enable");
+			});
+
 		});
-		*/
+		
 		
 		$("#destroy2").toggle(function() {
 			create();

@@ -80,6 +80,25 @@ test("buttons - auto (focus)", function() {
 	el.trigger('mouseout');
 });
 
+test("buttonWidth", function () {
+	expect(4);
+	
+	el = $('#spin');
+	el.spinner({ 
+		buttonWidth: 40
+	});
+		
+	el.closest(".ui-spinner").find(".ui-spinner-button").each(function () {
+		equals($(this).outerWidth(), 42, "button is correct width");
+	});
+	
+	el.spinner("option", "buttonWidth", 60);
+	
+	el.closest(".ui-spinner").find(".ui-spinner-button").each(function () {
+		equals($(this).outerWidth(), 62, "button is correctly resized");
+	});	
+});
+
 test("currency - single character currency symbol", function() {
 	expect(5);
 
@@ -342,22 +361,25 @@ test("precision", function() {
 	equals(el.val(), '1.234568', "6 decimal places");	
 });
 
-/*
-test("radix", function() {
-	expect(2);
+
+test("units", function() {
+	expect(3);
 	
 	el = $("#spin").spinner({
-		radix: 16,
-		value: 10
+		units: " cm"
 	});
 	
-	equals(el.val(), 'a', 'start value');
+	equals(el.val(), '0 cm', 'units displayed correctly');
 	
-	simulateKeyDownUp(el, $.ui.keyCode.UP);
+	el.spinner("stepUp");
 	
-	equals(el.val(), 'b', 'key UP on spinner')
+	equals(el.val(), '1 cm', 'units maintained');
+
+	el.spinner("option", "units", " in.");
+
+	equals(el.val(), '1 in.', 'units changed');
 });
-*/
+
 
 test("radixPoint", function() {
 	el = $("#spin").spinner({

@@ -12,35 +12,40 @@
 	<link type="text/css" href="../demos.css" rel="stylesheet" />
 	<script type="text/javascript">
 	$(function() {
-		var map;
-		function latlong() {
-			return new google.maps.LatLng($("#lat").val(),$("#lng").val());
+		var map,
+			lat = $("#lat"),
+			lng = $("#lng");
+			
+		function readLatLng() {
+			return new google.maps.LatLng(lat.val(), lng.val());
 		}
-		function position() {
-			map.setCenter(latlong());
+		
+		function updateMap() {
+			map.setCenter(readLatLng());
+		}
+		
+		function updateSpinners () {
+		    var latLng = map.getCenter();
+			lat.spinner("value", latLng.lat(), true);
+			lng.spinner("value", latLng.lng(), true);
 		}
 		
 		map = new google.maps.Map($("#map")[0], {
-			zoom: 8,
-			center: latlong(),
-			mapTypeId: google.maps.MapTypeId.ROADMAP
+			zoom: 5,
+			center: readLatLng(),
+			mapTypeId: google.maps.MapTypeId.HYBRID
 		});
 		
-		google.maps.event.addListener(map, 'center_changed', function() {
-		    var latLng = map.getCenter();
-			$("#lat").spinner("value", latLng.lat(), true);
-			$("#lng").spinner("value", latLng.lng(), true);
-		});
+		google.maps.event.addListener(map, 'center_changed', updateSpinners);
 
-		
 		$("#lat, #lng").spinner({
 			precision: 6,
-			change: position
+			change: updateMap
 		});
 	});
 	</script>
 	<style>
-		#map { width:500px; height:350px; }
+		#map { width:500px; height:300px; }
 	</style>
 </head>
 <body>
@@ -49,9 +54,9 @@
 
 <p>
 	<label for="lat">Latitude</label>
-	<input id="lat" name="lat" value="44.797916" />
+	<input id="lat" name="lat" value="54.358557" />
 	<label for="lng">Longitude</label>
-	<input id="lng" name="lng" value="-93.278046" />
+	<input id="lng" name="lng" value="-3.585663" />
 </p>
 
 <div id="map"></div>

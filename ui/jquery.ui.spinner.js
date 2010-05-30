@@ -142,7 +142,6 @@ $.widget('ui.spinner', {
                     if (self.source == "mouse") { self._stop(); }
                 });
             
-        this.resize();
 
         // TODO: need a better way to exclude IE8 without resorting to $.browser.version
         // fix inline-block issues for IE. Since IE8 supports inline-block we need to exclude it.
@@ -162,7 +161,6 @@ $.widget('ui.spinner', {
 
         // button bindings
         this.buttons = uiSpinner.find('.ui-spinner-button')
-            .css("width", o.buttonWidth -1)
             .bind('mousedown'+namespace, function (event) {
                 var direction = $(this).hasClass('ui-spinner-up') ? 1 : -1;
                 self._stop();
@@ -187,6 +185,8 @@ $.widget('ui.spinner', {
                 $(this).removeClass(active + ' ' + hover);
             });
             
+        this.resize();
+		
         // mousewheel bindings
         if ($.fn.mousewheel) {
             this.element.mousewheel(function(event, delta) {
@@ -195,10 +195,11 @@ $.widget('ui.spinner', {
         }
             
         // ie doesn't fire mousedown on 2nd click, so have to fake it
+		// TODO: quit using $.browser and find a better way to trap this
+		// deviant and unnatural behaviour in IE.
         if ($.browser.msie) {
             this.buttons.bind("dblclick", function () {
-                $(this).trigger("mousedown")
-                    .trigger("mouseup");
+                $(this).trigger("mousedown").trigger("mouseup");
             });
         }
     },
@@ -206,11 +207,14 @@ $.widget('ui.spinner', {
     resize: function () {
         var o = this.options,
             el = this.element;
+		this.buttons.css("width", o.buttonWidth);
+		
         this.uiSpinner.css({
             "height": el.outerHeight(),
             "width": o.width    
         });
-        el.css("width", this.uiSpinner.width() - o.buttonWidth - (el.outerWidth() - el.width()));
+		
+        el.css("width", this.uiSpinner.width() - this.buttons.outerWidth() + 1 - (el.outerWidth() - el.width()));
     },
     
     _uiSpinnerHtml: function () {
@@ -395,8 +399,12 @@ $.widget('ui.spinner', {
         o[name] = value;
         if (name === "min" || name === "max") { this._ariaMinMax(); }
         else if (name === "showButtons") { this._showButtons(); }
-        else if (/(padding|precision|value|currency)/.test(name)) { this.value(o.value); }
-        else if (name === "width") { this.resize(); }
+        else if (/(padding|precision|value|currency|units)/.test(name)) {
+			this.value(o.value);
+		}
+        else if (/(width|buttonWidth)/.test(name)) {
+			this.resize();
+		}
         else if (name === "spinnerClass") {
             this.uiSpinner.removeClass(prev || "").addClass(value);
         }
@@ -495,7 +503,7 @@ $.extend($.ui.spinner.prototype, {
                 while (pad --> 0) { zeroes.push("0"); }
                 value = zeroes.join("") + value;
             }
-            return sign + this.currency + value;
+            return sign + this.currency + value + this.units;
         },
         
         parse: function (text) {
@@ -505,7 +513,8 @@ $.extend($.ui.spinner.prototype, {
             text = text.toString().replace(" ", "")
                 .replace(this.thousandSeparator, "")
                 .replace(this.radixPoint, ".")
-                .replace(this.currency, "");
+                .replace(this.currency, "")
+				.replace(this.units, "");
             result = re.exec(text);
             result =  parseFloat(result[2]) * (result[1]?-1.0:1.0);
             return result || 0;
