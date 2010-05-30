@@ -45,19 +45,13 @@ $.widget('ui.spinner', {
 			else { el.attr(name, o[name]); }
 		});
 		
-		// TODO: rephrase this
-		if (o.precision === null) {
-			if (o.value !== null && typeof value === "number" && value % 1) {
-				o.precision = /\.(\d+)/.exec(value.toString())[1].length;
-			}
-			else if (o.step !== null && typeof o.step === "number" && o.step % 1) {
-				o.precision = /\.(\d+)/.exec(o.step.toString())[1].length;
-			}
-			else {
-				o.precision = 0;
-			}
-		}		
-		
+		o.precision = (o.precision !== null) ? o.precision :
+				(value !== null && typeof value === "number" && value % 1) ?
+					o.precision = /\.(\d+)/.exec(value.toString())[1].length :
+				(o.step !== null && typeof o.step === "number" && o.step % 1) ?
+					o.precision = /\.(\d+)/.exec(o.step.toString())[1].length :
+				0;
+
 		if (o.step === null) { o.step = 1; el.attr("step", "1"); }
 		if (o.width === null) { o.width = this.element.outerWidth(); }
 		
@@ -95,7 +89,6 @@ $.widget('ui.spinner', {
 		var self = this,
 			o = self.options,
 			el = self.element;
-			//inputWidth = el.width() - o.buttonWidth;
 			
 		this.elementCSS = {
 			"margin-left": el.css("margin-left"),
@@ -193,7 +186,7 @@ $.widget('ui.spinner', {
 			});
 			
 		// mousewheel bindings
-		if ($.fn.mousewheel && self.options.useMouseWheel) {
+		if ($.fn.mousewheel) {
 			this.element.mousewheel(function(event, delta) {
 				self._mouseWheel(event, delta);
 			});
@@ -349,8 +342,7 @@ $.widget('ui.spinner', {
 	
 	_mouseWheel: function(event, delta) {
 		var self = this;
-		//delta = ($.browser.opera ? -delta / Math.abs(delta) : delta);
-		
+		if (!this.options.useMouseWheel) { return; }
 		self._spin((delta > 0 ? 1 : -1), event.shiftKey);
 		self._stop();
 		event.preventDefault();			
@@ -440,8 +432,8 @@ $.widget('ui.spinner', {
 		if (opt === neverShow) { this.buttons.hide(); }
 		else if (opt === alwaysShow || speed === "") { this.buttons.show(); }
 		else {
-			if (this.focused || this.hovering) { this.buttons.fadeIn(speed); }
-			else { this.buttons.fadeOut(speed); }
+			if (this.focused || this.hovering) { this.buttons.stop(true, true).fadeIn(speed); }
+			else { this.buttons.stop(true, true).fadeOut(speed); }
 		}
 	}
 	
@@ -468,8 +460,8 @@ $.extend($.ui.spinner.prototype, {
 		padding: null,
 		thousandSeparator: "",
 		increments: [{count: 2, increment: 1, delay: 500},
-					 {count: 50, increment: 1, delay: 50},
-					 {count: null, increment: 10, delay: 50}],
+					 {count: 50, increment: 1, delay: 100},
+					 {count: null, increment: 50, delay: 500}],
 		format: function (value) {
 			var sign, integral, fractional, result, pad, zeroes, orig = value;
 			if (typeof(value) !== "number") {

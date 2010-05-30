@@ -2,20 +2,21 @@
 <html lang="en">
 <head>
 	<title>jQuery UI Spinner - Default functionality</title>
-	<link type="text/css" href="../../themes/base/ui.all.css" rel="stylesheet" />
-	<script type="text/javascript" src="../../jquery-1.3.2.js"></script>
-	<script type="text/javascript" src="../../external/mousewheel/jquery.mousewheel.min.js"></script>
-	<script type="text/javascript" src="../../ui/ui.core.js"></script>
-	<script type="text/javascript" src="../../ui/ui.spinner.js"></script>
+	<link type="text/css" href="../../themes/base/jquery.ui.all.css" rel="stylesheet" />
+	<script type="text/javascript" src="../../jquery-1.4.2.js"></script>
+	<script type="text/javascript" src="../../external/jquery.mousewheel.js"></script>
+	<script type="text/javascript" src="../../ui/jquery.ui.core.js"></script>
+	<script type="text/javascript" src="../../ui/jquery.ui.widget.js"></script>
+	<script type="text/javascript" src="../../ui/jquery.ui.spinner.js"></script>
 	<link type="text/css" href="../demos.css" rel="stylesheet" />
 	<script type="text/javascript">
 	$(function() {
-		$("#s1").spinner({mouseWheel: false});
+		$("#s1").spinner({useMouseWheel: false});
 		
 		$("#enable").toggle(function() {
-			$("#s1").spinner("option", "mouseWheel", true);
+			$("#s1").spinner("option", "useMouseWheel", true);
 		}, function() {
-			$("#s1").spinner("option", "mouseWheel", false);			
+			$("#s1").spinner("option", "useMouseWheel", false);			
 		})
 		
 		$(".ui-button").hover(function() {

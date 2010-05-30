@@ -10,7 +10,14 @@
 	<link type="text/css" href="../demos.css" rel="stylesheet" />
 	<script type="text/javascript">
 	$(function() {
-		$("#value").spinner({incremental:true});
+		$("#value").spinner({
+			increments: [{count: 2, increment: 1, delay: 500},
+						 {count: 10, increment: 1, delay: 250},
+						 {count: 50, increment: 1, delay: 100},
+						 {count: 100, increment: 1, delay: 50},
+						 {count: 200, increment: 1, delay: 25},
+						 {count: null, increment: 1, delay: 10}]
+		});
 	});
 	</script>
 </head>
@@ -25,7 +32,7 @@
 
 <div class="demo-description">
 <p>
-Spinner with incremental swithed on.
+Spinner with customised increment stepping.
 </p>
 </div><!-- End demo-description -->
 
