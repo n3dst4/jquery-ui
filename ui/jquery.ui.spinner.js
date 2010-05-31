@@ -121,7 +121,7 @@ $.widget('ui.spinner', {
                 return self._keyUp(event);
             })
             .bind('blur'+namespace, function(event) {
-                if (self.source == "keyboard") { self._stop(); }
+                if (self.source == "keyboard") { self._stop(event); }
                 self._readValue();
                 self.focused = false;
                 self._showButtons();
@@ -136,10 +136,10 @@ $.widget('ui.spinner', {
                 .hover(function() {
                     self.hovering = true;
                     self._showButtons();
-                }, function() {
+                }, function(event) {
                     self.hovering = false;
                     self._showButtons();
-                    if (self.source == "mouse") { self._stop(); }
+                    if (self.source == "mouse") { self._stop(event); }
                 });
             
 
@@ -163,7 +163,7 @@ $.widget('ui.spinner', {
         this.buttons = uiSpinner.find('.ui-spinner-button')
             .bind('mousedown'+namespace, function (event) {
                 var direction = $(this).hasClass('ui-spinner-up') ? 1 : -1;
-                self._stop();
+                self._stop(event);
                 self.source = "mouse";
                 self._spin(direction, event.shiftKey);
                 
@@ -173,7 +173,7 @@ $.widget('ui.spinner', {
                 return true;
             })
             .bind('mouseup'+namespace, function (event) {
-                self._stop();
+                self._stop(event);
                 self.element.focus();
                 $(this).removeClass(active);
             })
@@ -269,7 +269,7 @@ $.widget('ui.spinner', {
     },
     
     _keyUp: function(event) {
-        this._stop();
+        this._stop(event);
     },
     
     _spin: function (direction, paging, force) {
@@ -293,7 +293,7 @@ $.widget('ui.spinner', {
         inc = o.increments[this.spinStage];
 
         // get next value
-        next = o.next(o.value, inc.increment * (paging?o.page:o.step), direction, o.min, o.max);
+        next = o.next.call(o, o.value, inc.increment * (paging?o.page:o.step), direction);
         if (next !== false) {
             this._trigger("spin", this.sourceEvent, {value: o.value, next: next});
             if (this.timer) { clearTimeout(this.timer); }
@@ -308,11 +308,13 @@ $.widget('ui.spinner', {
         this._trigger("start", this.sourceEvent, {value: this.options.value});
     },
     
-    _stop: function () {
+    _stop: function (event) {
         if (this.timer) {
             clearTimeout (this.timer);
             this.source = this.timer = this.spinCounter = this.spinStage = null;
-            this._trigger("stop", null, {value: this.options.value});
+            if (event) {
+				this._trigger("stop", event, {value: this.options.value});
+			}
         }
     },
     
@@ -350,7 +352,7 @@ $.widget('ui.spinner', {
         var self = this;
         if (!this.options.useMouseWheel) { return; }
         self._spin((delta > 0 ? 1 : -1), event.shiftKey);
-        self._stop();
+        self._stop(event);
         event.preventDefault();         
     },
     
@@ -431,7 +433,7 @@ $.widget('ui.spinner', {
         while (count --) {
             this._spin(direction, paging, true);
         }
-        this._stop();
+        this._stop(null);
     },
     
     // even though i'm philosophically opposed to vanishing UI elements...
@@ -519,8 +521,8 @@ $.extend($.ui.spinner.prototype, {
             result =  parseFloat(result[2]) * (result[1]?-1.0:1.0);
             return result || 0;
         },
-        next: function (currentValue, amount, direction, min, max) {
-            var n;
+        next: function (currentValue, amount, direction) {
+            var n, min = this.min, max = this.max;
             if ((direction > 0 && currentValue == max)
                     || (direction < 0 && currentValue == min)) { return false; }
             else {
