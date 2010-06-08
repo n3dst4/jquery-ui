@@ -21,6 +21,7 @@
 		<script type="text/javascript" src="../../ui/jquery.ui.selectable.js"></script>
 		<script type="text/javascript" src="../../ui/jquery.ui.slider.js"></script>
 		<script type="text/javascript" src="../../ui/jquery.ui.sortable.js"></script>
+		<script type="text/javascript" src="../../ui/jquery.ui.spinner.js"></script>
 		<script type="text/javascript" src="../../ui/jquery.ui.tabs.js"></script>
 		<script type="text/javascript">
 			$(function(){
@@ -145,6 +146,16 @@
 				$("#shuffle").button();
 				$("#repeat").buttonset();
 				
+				//Spinner
+				$("#spinner-1").spinner();
+				$("#spinner-2").spinner({
+					width: "200px",
+					min: 0,
+					precision: 10,
+					step: 0.000001,
+					page: 0.0001
+				});
+				
 			});
 		</script>
 		<style type="text/css">
@@ -160,6 +171,7 @@
 			#eq span { 	height:120px; float:left; margin:15px 	}
 			.buttonset {margin-bottom: 5px; }
 			#toolbar { padding: 10px 4px;  }
+			.spinner-label { display: inline-block; width: 100px; }
 		</style>	
 	</head>
 	<body>
@@ -515,7 +527,18 @@
 				<input type="radio" id="repeat1" name="repeat" /><label for="repeat1">Once</label>
 				<input type="radio" id="repeatall" name="repeat" /><label for="repeatall">All</label>
 			</span>
-		</span>	
+		</span>
+		
+		<h2 class="demoHeaders">Spinner</h2>
+		
+		<p>
+			<span class="spinner-label">Spinner:</span>
+			<input id="spinner-1"></spinner>
+		</p>
+		<p>
+			<span class="spinner-label">Other spinner:</span>
+			<input id="spinner-2"></spinner>
+		</p>
 			
 		<!-- theme switcher -->
 	
